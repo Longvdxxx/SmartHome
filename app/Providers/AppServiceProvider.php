@@ -33,6 +33,7 @@ class AppServiceProvider extends ServiceProvider
                         'id'    => $user->id,
                         'name'  => $user->name,
                         'email' => $user->email,
+                        'phone' => $user->phone_number,
                         'role'  => $user->role,
                     ] : null,
 

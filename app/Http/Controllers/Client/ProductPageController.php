@@ -40,9 +40,11 @@ class ProductPageController extends Controller
             ];
         });
 
-        $relatedProducts = Product::where('id', '!=', $product->id)
-            ->inRandomOrder()
-            ->limit(6)
+        $relatedProducts = DB::table('product_recommendations')
+            ->join('products', 'products.id', '=', 'product_recommendations.recommended_product_id')
+            ->where('product_recommendations.product_id', $product->id)
+            ->orderByDesc('score')
+            ->limit(5)
             ->get()
             ->map(function ($p) {
                 return [
@@ -51,9 +53,9 @@ class ProductPageController extends Controller
                     'price' => '$' . number_format($p->price, 2),
                     'image' => $p->default_image ? '/' . ltrim($p->default_image, '/') : null,
                 ];
-            });
+        });
 
-        // Tính rating trung bình
+
         $averageRating = $reviews->count() > 0
             ? round($reviews->avg('rating'), 1)
             : 0;

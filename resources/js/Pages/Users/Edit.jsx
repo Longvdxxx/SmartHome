@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Divider } from 'primereact/divider';
+import { Dropdown } from 'primereact/dropdown';
 
 export default function Edit({ user }) {
     const toast = useRef(null);
@@ -15,6 +16,7 @@ export default function Edit({ user }) {
         name: user.name || '',
         email: user.email || '',
         phone_number: user.phone_number || '',
+        role: user.role || '',
         password: '',
         password_confirmation: '',
     });
@@ -56,7 +58,7 @@ export default function Edit({ user }) {
     );
 
     const cardHeader = (
-        <div className="flex align-items-start gap-3 pb-3">
+        <div className="flex items-center gap-4 p-4">
             <div className="bg-blue-100 p-3 border-round-xl mt-6 ml-4">
                 <i className="pi pi-user-edit text-blue-500 text-2xl"></i>
             </div>
@@ -71,21 +73,17 @@ export default function Edit({ user }) {
         <>
             <Head title="Edit User" />
             <Toast ref={toast} />
-
             <div className="min-h-screen bg-gray-50 p-6">
                 <div className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-fit mx-auto">
-                        {/* Main Form */}
                         <div className="lg:col-span-2">
                             <Card className="shadow-3" header={cardHeader}>
                                 <form onSubmit={submit} className="space-y-6">
-                                    {/* Basic Information Section */}
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex align-items-center gap-2">
                                             <i className="pi pi-info-circle text-blue-500"></i>
                                             Basic Information
                                         </h3>
-
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="field">
                                                 <label htmlFor="name" className="block text-900 font-medium mb-2">
@@ -102,7 +100,6 @@ export default function Edit({ user }) {
                                                     <small className="p-error block mt-1">{errors.name}</small>
                                                 )}
                                             </div>
-
                                             <div className="field">
                                                 <label htmlFor="phone_number" className="block text-900 font-medium mb-2">
                                                     Phone Number
@@ -119,34 +116,50 @@ export default function Edit({ user }) {
                                                 )}
                                             </div>
                                         </div>
-
-                                        <div className="field mt-4">
-                                            <label htmlFor="email" className="block text-900 font-medium mb-2">
-                                                Email Address <span className="text-red-500">*</span>
-                                            </label>
-                                            <InputText
-                                                id="email"
-                                                type="email"
-                                                value={data.email}
-                                                onChange={(e) => setData('email', e.target.value)}
-                                                className={`w-full ${errors.email ? 'p-invalid' : ''}`}
-                                                placeholder="Enter email address"
-                                            />
-                                            {errors.email && (
-                                                <small className="p-error block mt-1">{errors.email}</small>
-                                            )}
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                                            <div className="field">
+                                                <label htmlFor="email" className="block text-900 font-medium mb-2">
+                                                    Email Address <span className="text-red-500">*</span>
+                                                </label>
+                                                <InputText
+                                                    id="email"
+                                                    type="email"
+                                                    value={data.email}
+                                                    onChange={(e) => setData('email', e.target.value)}
+                                                    className={`w-full ${errors.email ? 'p-invalid' : ''}`}
+                                                    placeholder="Enter email address"
+                                                />
+                                                {errors.email && (
+                                                    <small className="p-error block mt-1">{errors.email}</small>
+                                                )}
+                                            </div>
+                                            <div className="field">
+                                                <label htmlFor="role" className="block text-900 font-medium mb-2">
+                                                    Role <span className="text-red-500">*</span>
+                                                </label>
+                                                <Dropdown
+                                                    id="role"
+                                                    value={data.role}
+                                                    onChange={(e) => setData('role', e.value)}
+                                                    options={[
+                                                        { label: 'Admin', value: 'admin' },
+                                                        { label: 'User', value: 'user' },
+                                                    ]}
+                                                    placeholder="Select role"
+                                                    className={`w-full border border-gray-300 rounded-md ${errors.role ? 'p-invalid' : ''}`}
+                                                />
+                                                {errors.role && (
+                                                    <small className="p-error block mt-1">{errors.role}</small>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
-
                                     <Divider />
-
-                                    {/* Security Section */}
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex align-items-center gap-2">
                                             <i className="pi pi-shield text-green-500"></i>
                                             Change Password (Optional)
                                         </h3>
-
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="field">
                                                 <label htmlFor="password" className="block text-900 font-medium mb-2">
@@ -169,7 +182,6 @@ export default function Edit({ user }) {
                                                     <small className="p-error block mt-1">{errors.password}</small>
                                                 )}
                                             </div>
-
                                             <div className="field">
                                                 <label htmlFor="password_confirmation" className="block text-900 font-medium mb-2">
                                                     Confirm New Password
@@ -189,10 +201,7 @@ export default function Edit({ user }) {
                                             </div>
                                         </div>
                                     </div>
-
                                     <Divider />
-
-                                    {/* Action Buttons */}
                                     <div className="flex gap-3 justify-content-end">
                                         <Button
                                             type="button"
@@ -213,8 +222,6 @@ export default function Edit({ user }) {
                                 </form>
                             </Card>
                         </div>
-
-                        {/* Sidebar */}
                         <div className="lg:col-span-1">
                             <Card className="shadow-3 mb-4">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-3 flex align-items-center gap-2">
@@ -234,13 +241,8 @@ export default function Edit({ user }) {
                                         <i className="pi pi-check text-green-500 mt-1"></i>
                                         Changes will be saved immediately
                                     </li>
-                                    {/* <li className="flex align-items-start gap-2">
-                                        <i className="pi pi-check text-green-500 mt-1"></i>
-                                        User will be notified of password changes via email
-                                    </li> */}
                                 </ul>
                             </Card>
-
                             <Card className="shadow-3">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-3 flex align-items-center gap-2">
                                     <i className="pi pi-cog text-gray-500"></i>

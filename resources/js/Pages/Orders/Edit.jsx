@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 import { Card } from 'primereact/card';
-import { InputText } from 'primereact/inputtext';
 import { Dropdown } from 'primereact/dropdown';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
@@ -12,9 +11,7 @@ export default function EditOrder({ order, customers }) {
     const [loading, setLoading] = useState(false);
 
     const { data, setData, put, processing, errors } = useForm({
-        customer_id: order.customer_id || '',
         status: order.status || '',
-        total_price: order.total_price || '',
     });
 
     const statusOptions = [
@@ -33,7 +30,7 @@ export default function EditOrder({ order, customers }) {
                 toast.current?.show({
                     severity: 'success',
                     summary: 'Success',
-                    detail: 'Order updated successfully!'
+                    detail: 'Order status updated successfully!'
                 });
                 setLoading(false);
             },
@@ -49,13 +46,13 @@ export default function EditOrder({ order, customers }) {
     };
 
     const cardHeader = (
-        <div className="flex align-items-start gap-3 pb-3">
+        <div className="flex items-center gap-4 p-4">
             <div className="bg-blue-100 p-3 border-round-xl mt-6 ml-4">
                 <i className="pi pi-pencil text-blue-500 text-2xl"></i>
             </div>
             <div className="mt-6">
                 <h2 className="text-2xl font-bold text-gray-800 m-0">Edit Order</h2>
-                <p className="text-gray-600 m-0 mt-1">Update order details</p>
+                <p className="text-gray-600 m-0 mt-1">Update order status only</p>
             </div>
         </div>
     );
@@ -75,55 +72,40 @@ export default function EditOrder({ order, customers }) {
                                         Order Information
                                     </h3>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        {/* Customer */}
-                                        <div className="field">
-                                            <label htmlFor="customer_id" className="block font-medium mb-2">
-                                                Customer <span className="text-red-500">*</span>
-                                            </label>
-                                            <Dropdown
-                                                id="customer_id"
-                                                value={data.customer_id}
-                                                options={customers.map(c => ({ label: c.name, value: c.id }))}
-                                                onChange={(e) => setData('customer_id', e.value)}
-                                                className={`w-full ${errors.customer_id ? 'p-invalid' : ''}`}
-                                                placeholder="Select customer"
-                                                filter
-                                            />
-                                            {errors.customer_id && <small className="p-error">{errors.customer_id}</small>}
-                                        </div>
-
-                                        {/* Status */}
-                                        <div className="field">
-                                            <label htmlFor="status" className="block font-medium mb-2">
-                                                Status <span className="text-red-500">*</span>
-                                            </label>
-                                            <Dropdown
-                                                id="status"
-                                                value={data.status}
-                                                options={statusOptions}
-                                                onChange={(e) => setData('status', e.value)}
-                                                className={`w-full ${errors.status ? 'p-invalid' : ''}`}
-                                                placeholder="Select status"
-                                            />
-                                            {errors.status && <small className="p-error">{errors.status}</small>}
-                                        </div>
+                                    {/* Customer - readonly */}
+                                    <div className="field">
+                                        <label className="block font-medium mb-2">
+                                            Customer
+                                        </label>
+                                        <p className="p-2 border-round bg-gray-100">
+                                            {customers.find(c => c.id === order.customer_id)?.name || 'N/A'}
+                                        </p>
                                     </div>
 
-                                    {/* Total Price */}
-                                    <div className="field mt-4">
-                                        <label htmlFor="total_price" className="block font-medium mb-2">
-                                            Total Price <span className="text-red-500">*</span>
+                                    {/* Total Price - readonly */}
+                                    <div className="field mt-3">
+                                        <label className="block font-medium mb-2">
+                                            Total Price
                                         </label>
-                                        <InputText
-                                            id="total_price"
-                                            type="number"
-                                            value={data.total_price}
-                                            onChange={(e) => setData('total_price', e.target.value)}
-                                            className={`w-full ${errors.total_price ? 'p-invalid' : ''}`}
-                                            placeholder="Enter total price"
+                                        <p className="p-2 border-round bg-gray-100">
+                                            ${order.total_price}
+                                        </p>
+                                    </div>
+
+                                    {/* Status - editable */}
+                                    <div className="field mt-3">
+                                        <label htmlFor="status" className="block font-medium mb-2">
+                                            Status <span className="text-red-500">*</span>
+                                        </label>
+                                        <Dropdown
+                                            id="status"
+                                            value={data.status}
+                                            options={statusOptions}
+                                            onChange={(e) => setData('status', e.value)}
+                                            className={`w-full ${errors.status ? 'p-invalid' : ''}`}
+                                            placeholder="Select status"
                                         />
-                                        {errors.total_price && <small className="p-error">{errors.total_price}</small>}
+                                        {errors.status && <small className="p-error">{errors.status}</small>}
                                     </div>
                                 </div>
 
@@ -140,7 +122,7 @@ export default function EditOrder({ order, customers }) {
                                     />
                                     <Button
                                         type="submit"
-                                        label="Update Order"
+                                        label="Update Status"
                                         icon="pi pi-check"
                                         loading={loading || processing}
                                         className="p-button-primary"

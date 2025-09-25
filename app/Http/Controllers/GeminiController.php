@@ -14,9 +14,66 @@ class GeminiController extends Controller
             $userMessage = $request->input('message');
             Log::info("User message: " . $userMessage);
 
+            $qaFile = storage_path('app/qa.json');
+            $qaData = file_exists($qaFile) ? json_decode(file_get_contents($qaFile), true) : [];
+
+            $synonyms = [
+                'offline shop' => ['physical store', 'visit your shop', 'retail store'],
+                'refund' => ['return money', 'money back'],
+                'cancel order' => ['cancel purchase', 'stop my order'],
+                'delivery' => ['shipping', 'ship', 'transport'],
+                'warranty' => ['guarantee', 'assurance'],
+                'discount' => ['promotion', 'sale', 'offer'],
+                'support' => ['help', 'assistance', 'customer service']
+            ];
+
+            $normalizedUser = strtolower($userMessage);
+            foreach ($synonyms as $main => $alts) {
+                foreach ($alts as $alt) {
+                    $normalizedUser = str_replace($alt, $main, $normalizedUser);
+                }
+            }
+
+            $bestMatch = null;
+            $highestScore = 0;
+
+            foreach ($qaData as $qa) {
+                $question = strtolower($qa['question']);
+                foreach ($synonyms as $main => $alts) {
+                    foreach ($alts as $alt) {
+                        $question = str_replace($alt, $main, $question);
+                    }
+                }
+
+                similar_text($normalizedUser, $question, $percent);
+
+                $userWords = array_filter(explode(" ", preg_replace('/[^a-z0-9 ]/', '', $normalizedUser)));
+                $qaWords = array_filter(explode(" ", preg_replace('/[^a-z0-9 ]/', '', $question)));
+
+                $overlap = count(array_intersect($userWords, $qaWords));
+                $keywordScore = (count($qaWords) > 0) ? ($overlap / count($qaWords)) * 100 : 0;
+
+                $score = ($percent * 0.7) + ($keywordScore * 0.3);
+
+                if ($score > $highestScore) {
+                    $highestScore = $score;
+                    $bestMatch = $qa['answer'];
+                }
+            }
+
+            if ($highestScore >= 50) {
+                return response()->json([
+                    'reply' => $bestMatch
+                ]);
+            }
+
             $apiKey = env('GEMINI_API_KEY');
 
-            $prompt = "Please give a short and concise answer (maximum 3 sentences).\nUser: " . $userMessage;
+            $prompt = "You are an AI assistant for a SmartHome e-commerce website.
+Your role is to answer customer questions about smart home devices, installation, and usage.
+Only respond to SmartHome-related questions.
+If the question is unrelated, politely say you can only assist with SmartHome topics.
+Keep answers short and concise (maximum 3 sentences).\n\nUser: " . $userMessage;
 
             $response = Http::withoutVerifying()->withHeaders([
                 'Content-Type' => 'application/json',

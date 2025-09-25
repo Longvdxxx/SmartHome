@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
-import InputError from '@/Components/InputError';
-import PrimaryButton from '@/Components/PrimaryButton';
 import { Head, useForm } from '@inertiajs/react';
 import { InputText } from 'primereact/inputtext';
+import InputError from '@/Components/InputError';
+import { Button } from 'primereact/button';
 
 export default function ResetPassword({ token, email }) {
     const { data, setData, post, processing, errors, reset } = useForm({
@@ -25,177 +25,92 @@ export default function ResetPassword({ token, email }) {
 
     return (
         <>
-            <Head title="Reset Password" />
+            <Head title="SmartShop - Reset Password" />
 
-            <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-teal-50 to-cyan-100 flex overflow-auto">
-                {/* Left Side - Branding */}
-                <div className="hidden lg:flex lg:w-1/2 xl:w-2/5 bg-gradient-to-br from-teal-600 to-cyan-700 p-12 flex-col justify-center items-center text-white relative overflow-hidden">
-                    <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                    <div className="relative z-10 text-center">
-                        <div className="w-32 h-32 bg-white bg-opacity-20 rounded-full flex items-center justify-center mb-8 mx-auto">
-                            <svg className="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                            </svg>
-                        </div>
-                        <h1 className="text-5xl font-bold mb-6">New Password</h1>
-                        <p className="text-xl text-teal-100 leading-relaxed max-w-md">
-                            You're almost done! Create a strong new password to secure your account and regain access.
+            <div className="flex min-h-screen bg-gray-50">
+                <div className="hidden lg:flex lg:w-1/2 xl:w-2/5 relative bg-gradient-to-br from-green-500 to-blue-600 text-white">
+                    <div className="relative z-10 flex flex-col justify-center items-center text-center p-12">
+                        <h1 className="text-5xl font-extrabold mb-4 tracking-wide">SmartShop</h1>
+                        <p className="text-lg text-green-100 max-w-md leading-relaxed">
+                            Secure your account with a strong password and continue enjoying SmartShop.
                         </p>
                     </div>
-
-                    {/* Decorative Elements */}
-                    <div className="absolute top-20 left-20 w-28 h-28 bg-white bg-opacity-10 rounded-full"></div>
-                    <div className="absolute bottom-20 right-20 w-24 h-24 bg-white bg-opacity-10 rounded-full"></div>
-                    <div className="absolute top-1/3 right-10 w-20 h-20 bg-white bg-opacity-10 rounded-full"></div>
-                    <div className="absolute bottom-1/3 left-10 w-16 h-16 bg-white bg-opacity-10 rounded-full"></div>
                 </div>
 
-                {/* Right Side - Reset Form */}
                 <div className="w-full lg:w-1/2 xl:w-3/5 flex items-center justify-center p-8">
-                    <div className="w-full max-w-2xl">
-                        {/* Mobile Header */}
-                        <div className="lg:hidden text-center mb-8">
-                            <div className="w-20 h-20 bg-teal-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                <svg className="w-10 h-10 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                                </svg>
-                            </div>
+                    <div className="w-full max-w-md bg-white shadow-lg rounded-2xl p-8">
+                        <div className="lg:hidden text-center mb-6">
+                            <h1 className="text-3xl font-bold text-green-600">SmartShop</h1>
                         </div>
 
-                        {/* Header Section */}
-                        <div className="text-center mb-10">
-                            <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 mb-4">Reset Your Password</h2>
-                            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                                <p className="text-blue-800 text-lg">
-                                    Enter your email address and create a strong new password below.
-                                </p>
-                            </div>
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2">Reset Password</h2>
+                            <p className="text-gray-600">Enter your email and set a new password</p>
                         </div>
 
-                        {/* Reset Password Form */}
                         <form onSubmit={submit} className="space-y-6">
-                            {/* Email Field */}
-                            <div className="space-y-3">
-                                <label htmlFor="email" className="block text-lg font-semibold text-gray-700">
-                                    Email Address
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+                                    Email
                                 </label>
                                 <InputText
                                     id="email"
                                     type="email"
+                                    className="w-full mt-1 border-gray-300 bg-gray-100"
+                                    style={{ height: '3rem' }}
                                     value={data.email}
-                                    className="w-full border-2 border-gray-200 hover:border-teal-300 focus:border-teal-500 transition-colors bg-gray-50"
-                                    style={{
-                                        height: '3.5rem',
-                                        fontSize: '1.125rem',
-                                        padding: '0 1rem'
-                                    }}
-                                    autoComplete="username"
                                     readOnly
                                     onChange={(e) => setData('email', e.target.value)}
                                 />
-                                <InputError message={errors.email} className="text-red-600" />
+                                <InputError message={errors.email} />
                             </div>
 
-                            {/* Password Fields Row */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                {/* New Password Field */}
-                                <div className="space-y-3">
-                                    <label htmlFor="password" className="block text-lg font-semibold text-gray-700">
-                                        New Password
-                                    </label>
-                                    <InputText
-                                        id="password"
-                                        type="password"
-                                        placeholder="Enter new password"
-                                        className="w-full border-2 border-gray-200 hover:border-teal-300 focus:border-teal-500 transition-colors"
-                                        style={{
-                                            height: '3.5rem',
-                                            fontSize: '1.125rem',
-                                            padding: '0 1rem'
-                                        }}
-                                        value={data.password}
-                                        autoComplete="new-password"
-                                        onChange={(e) => setData('password', e.target.value)}
-                                    />
-                                    <InputError message={errors.password} className="text-red-600" />
-                                </div>
-
-                                {/* Confirm Password Field */}
-                                <div className="space-y-3">
-                                    <label htmlFor="password_confirmation" className="block text-lg font-semibold text-gray-700">
-                                        Confirm Password
-                                    </label>
-                                    <InputText
-                                        id="password_confirmation"
-                                        type="password"
-                                        placeholder="Confirm new password"
-                                        className="w-full border-2 border-gray-200 hover:border-teal-300 focus:border-teal-500 transition-colors"
-                                        style={{
-                                            height: '3.5rem',
-                                            fontSize: '1.125rem',
-                                            padding: '0 1rem'
-                                        }}
-                                        value={data.password_confirmation}
-                                        autoComplete="new-password"
-                                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                                    />
-                                    <InputError message={errors.password_confirmation} className="text-red-600" />
-                                </div>
+                            <div>
+                                <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                                    New Password
+                                </label>
+                                <InputText
+                                    id="password"
+                                    type="password"
+                                    placeholder="Enter new password"
+                                    className="w-full mt-1 border-gray-300"
+                                    style={{ height: '3rem' }}
+                                    value={data.password}
+                                    autoComplete="new-password"
+                                    onChange={(e) => setData('password', e.target.value)}
+                                />
+                                <InputError message={errors.password} />
                             </div>
 
-                            {/* Password Requirements */}
-                            <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
-                                <h4 className="font-semibold text-gray-700 mb-2">Password Requirements:</h4>
-                                <ul className="text-sm text-gray-600 space-y-1">
-                                    <li className="flex items-center">
-                                        <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        At least 8 characters long
-                                    </li>
-                                    <li className="flex items-center">
-                                        <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        Include uppercase and lowercase letters
-                                    </li>
-                                    <li className="flex items-center">
-                                        <svg className="w-4 h-4 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                        </svg>
-                                        Include at least one number or symbol
-                                    </li>
-                                </ul>
+                            <div>
+                                <label htmlFor="password_confirmation" className="block text-sm font-medium text-gray-700">
+                                    Confirm Password
+                                </label>
+                                <InputText
+                                    id="password_confirmation"
+                                    type="password"
+                                    placeholder="Confirm new password"
+                                    className="w-full mt-1 border-gray-300"
+                                    style={{ height: '3rem' }}
+                                    value={data.password_confirmation}
+                                    autoComplete="new-password"
+                                    onChange={(e) => setData('password_confirmation', e.target.value)}
+                                />
+                                <InputError message={errors.password_confirmation} />
                             </div>
 
-                            {/* Reset Button */}
-                            <div className="pt-4">
-                                <PrimaryButton
-                                    className="w-full bg-teal-600 hover:bg-teal-700 border-teal-600 hover:border-teal-700 text-white font-semibold text-xl transition-colors"
-                                    style={{ height: '3.5rem' }}
-                                    disabled={processing}
-                                >
-                                    {processing ? 'Resetting Password...' : 'Reset Password'}
-                                </PrimaryButton>
-                            </div>
+                            <Button
+                                type="submit"
+                                label="Reset Password"
+                                className="w-full bg-green-600 hover:bg-green-700 border-green-600 hover:border-green-700 text-white font-semibold text-lg transition-colors"
+                                style={{ height: '3rem' }}
+                                loading={processing}
+                            />
                         </form>
 
-                        {/* Security Note */}
-                        <div className="mt-8 bg-green-50 border border-green-200 rounded-lg p-4">
-                            <div className="flex items-center">
-                                <svg className="w-5 h-5 text-green-600 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                                <p className="text-green-800 text-sm">
-                                    After resetting, you'll be automatically signed in to your account with your new password.
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Back to Login */}
                         <div className="mt-6 text-center">
                             <p className="text-gray-600">
-                                <a href={route('login')} className="text-teal-600 hover:text-teal-800 font-medium transition-colors">
+                                <a href={route('login')} className="text-green-600 hover:text-green-800 font-medium transition-colors">
                                     ← Back to Login
                                 </a>
                             </p>

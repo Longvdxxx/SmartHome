@@ -63,7 +63,7 @@ class DashboardController extends Controller
             )
             ->groupBy('products.id', 'products.name', 'products.price', 'products.default_image', 'product_images.url')
             ->orderByDesc('sold')
-            ->limit(6)
+            ->limit(5)
             ->get()
             ->map(function ($product) {
                 return [
@@ -95,7 +95,7 @@ class DashboardController extends Controller
                 'products.created_at'
             )
             ->orderBy('products.created_at', 'desc')
-            ->limit(6)
+            ->limit(5)
             ->get()
             ->map(function ($product) {
                 return [

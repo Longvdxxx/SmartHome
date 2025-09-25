@@ -171,7 +171,7 @@ export default function Index({ auth, banners, products, filters }) {
                             }}
                             paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
                             currentPageReportTemplate={`Showing ${firstRecord} to ${lastRecord} of ${totalRecords} banners`}
-                            rowsPerPageOptions={[10, 25, 50]}
+
                             className="p-datatable-sm"
                             stripedRows
                             responsiveLayout="scroll"

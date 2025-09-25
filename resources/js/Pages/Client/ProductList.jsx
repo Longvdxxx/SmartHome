@@ -2,12 +2,11 @@ import React from "react";
 import { Link, router } from "@inertiajs/react";
 import CustomerLayout from "@/Layouts/CustomerLayout";
 
-
 export default function ProductList({ products, filters, categories, brands }) {
   const { search, category, brand, sort } = filters;
 
   const handleFilter = (e) => {
-    router.get(route("products.index"), {
+    router.get(route("client-products.index"), {
       ...filters,
       [e.target.name]: e.target.value,
     });
@@ -16,7 +15,7 @@ export default function ProductList({ products, filters, categories, brands }) {
   const handleSearch = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    router.get(route("products.index"), {
+    router.get(route("client-products.index"), {
       ...filters,
       search: formData.get("search"),
     });
@@ -98,22 +97,28 @@ export default function ProductList({ products, filters, categories, brands }) {
               <Link
                 key={p.id}
                 href={`/shop/products/${p.id}`}
-                className="border rounded-lg p-4 hover:shadow bg-gray-50"
+                className="group relative border rounded-lg p-4 bg-gray-50 w-60 h-80 flex flex-col justify-between
+                           transition-transform duration-300 hover:scale-125 hover:z-50 hover:shadow-2xl"
               >
-                <div className="w-48 h-48 bg-gray-200 mb-2 rounded overflow-hidden flex items-center justify-center mx-auto">
+                <div className="w-full h-48 bg-gray-200 mb-2 rounded overflow-hidden flex items-center justify-center">
                   {p.image ? (
-                      <img
+                    <img
                       src={p.image}
                       alt={p.name}
                       className="w-full h-full object-cover"
-                      />
+                    />
                   ) : (
-                      <span className="text-gray-500 text-sm">No Image</span>
+                    <span className="text-gray-500 text-sm">No Image</span>
                   )}
                 </div>
 
-                <p className="font-bold">{p.name}</p>
-                <p className="text-green-600">{p.price}</p>
+                <div>
+                  <p className="font-bold overflow-hidden whitespace-nowrap text-ellipsis
+                                 group-hover:whitespace-normal group-hover:break-words group-hover:overflow-visible">
+                    {p.name}
+                  </p>
+                  <p className="text-green-600">{p.price}</p>
+                </div>
               </Link>
             ))}
           </div>

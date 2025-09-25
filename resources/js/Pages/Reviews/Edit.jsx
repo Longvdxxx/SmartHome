@@ -43,7 +43,7 @@ export default function Edit({ review, products, users }) {
     };
 
     const cardHeader = (
-        <div className="flex align-items-start gap-3 pb-3">
+        <div className="flex items-center gap-4 p-4">
             <div className="bg-yellow-100 p-3 border-round-xl mt-6 ml-4">
                 <i className="pi pi-comment text-yellow-500 text-2xl"></i>
             </div>

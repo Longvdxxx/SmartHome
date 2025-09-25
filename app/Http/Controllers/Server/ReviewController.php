@@ -88,4 +88,11 @@ class ReviewController extends Controller
         $review->delete();
         return redirect()->back()->with('success', 'Review deleted.');
     }
+
+    public function show(Review $review)
+    {
+        return Inertia::render('Reviews/Show', [
+            'review' => $review->load(['user', 'product'])
+        ]);
+    }
 }

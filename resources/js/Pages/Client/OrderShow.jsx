@@ -1,21 +1,46 @@
-import React from "react";
+import React, { useState } from "react";
 import CustomerLayout from "@/Layouts/CustomerLayout";
 import { router } from "@inertiajs/react";
 
 export default function OrderShow({ order }) {
+  const [reviews, setReviews] = useState(
+    order.items.map((item) => ({
+      productId: item.product.id,
+      rating: 5,
+      comment: "",
+    }))
+  );
+
   const handleCancel = () => {
-    if (
-      confirm("Are you sure you want to cancel this order?")
-    ) {
+    if (confirm("Are you sure you want to cancel this order?")) {
       router.post(`/shop/orders/${order.id}/cancel`);
     }
+  };
+
+  const handleConfirmReceived = () => {
+    if (confirm("Confirm you have received this order?")) {
+      router.post(`/shop/orders/${order.id}/confirm`);
+    }
+  };
+
+  const handleReviewChange = (productId, field, value) => {
+    setReviews((prev) =>
+      prev.map((r) =>
+        r.productId === productId ? { ...r, [field]: value } : r
+      )
+    );
+  };
+
+  const handleReviewSubmit = (e, productId) => {
+    e.preventDefault();
+    const review = reviews.find((r) => r.productId === productId);
+    router.post(`/shop/orders/${order.id}/products/${productId}/review`, review);
   };
 
   return (
     <CustomerLayout>
       <div className="container mx-auto p-6">
         <h1 className="text-2xl font-bold mb-6">Order #{order.id}</h1>
-
         <p className="mb-4">
           <span className="font-semibold">Status:</span> {order.status}
         </p>
@@ -88,13 +113,93 @@ export default function OrderShow({ order }) {
           </div>
         </div>
 
-        {order.status !== "completed" && order.status !== "cancelled" && (
-          <button
-            onClick={handleCancel}
-            className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-          >
-            Cancel Order
-          </button>
+        {/* Action Buttons */}
+        <div className="flex gap-4">
+          {(order.status === "pending" || order.status === "processing") && (
+            <button
+              onClick={handleConfirmReceived}
+              className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+            >
+              Confirm Received
+            </button>
+          )}
+          {order.status !== "completed" && order.status !== "cancelled" && (
+            <button
+              onClick={handleCancel}
+              className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+            >
+              Cancel Order
+            </button>
+          )}
+        </div>
+
+        {order.status === "completed" && (
+          <div className="mt-8 border p-4 rounded bg-gray-50">
+            <h2 className="text-xl font-semibold mb-4">Leave a Review</h2>
+            {order.items.map((item) => {
+              const alreadyReviewed =
+                item.product.reviews && item.product.reviews.length > 0;
+
+              if (alreadyReviewed) {
+                const reviewData = item.product.reviews[0]; // review trên đơn này
+                return (
+                  <div key={item.id} className="mb-6 border-b pb-4">
+                    <p className="font-semibold mb-2">{item.product.name}</p>
+                    <p className="text-green-600">✅ You already reviewed this product.</p>
+                    {reviewData.comment && (
+                      <p className="mt-1 text-gray-700">Comment: {reviewData.comment}</p>
+                    )}
+                  </div>
+                );
+              }
+
+              const review = reviews.find((r) => r.productId === item.product.id);
+
+              return (
+                <form
+                  key={item.id}
+                  onSubmit={(e) => handleReviewSubmit(e, item.product.id)}
+                  className="mb-6 border-b pb-4"
+                >
+                  <p className="font-semibold mb-2">{item.product.name}</p>
+                  <div className="flex items-center gap-2 mb-2">
+                    <label className="font-medium">Rating:</label>
+                    <select
+                      value={review.rating}
+                      onChange={(e) =>
+                        handleReviewChange(
+                          item.product.id,
+                          "rating",
+                          parseInt(e.target.value)
+                        )
+                      }
+                      className="border p-2 rounded"
+                    >
+                      <option value="1">1 ⭐</option>
+                      <option value="2">2 ⭐⭐</option>
+                      <option value="3">3 ⭐⭐⭐</option>
+                      <option value="4">4 ⭐⭐⭐⭐</option>
+                      <option value="5">5 ⭐⭐⭐⭐⭐</option>
+                    </select>
+                  </div>
+                  <textarea
+                    value={review.comment}
+                    onChange={(e) =>
+                      handleReviewChange(item.product.id, "comment", e.target.value)
+                    }
+                    className="w-full border p-2 rounded mb-2"
+                    placeholder={`Write your review for ${item.product.name}`}
+                  />
+                  <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
+                  >
+                    Submit Review
+                  </button>
+                </form>
+              );
+            })}
+          </div>
         )}
       </div>
     </CustomerLayout>

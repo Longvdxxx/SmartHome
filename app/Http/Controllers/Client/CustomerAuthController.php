@@ -15,6 +15,11 @@ class CustomerAuthController extends Controller
         return inertia('Client/Login');
     }
 
+    public function showRegisterForm()
+    {
+        return inertia('Client/Register');
+    }
+
     public function login(Request $request)
     {
         $credentials = $request->only('email', 'password');

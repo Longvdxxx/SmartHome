@@ -73,7 +73,13 @@ export default function Index({ auth, users, filters }) {
 
   const idTemplate = (rowData) => <Tag value={`#${rowData.id}`} className="p-tag-rounded" />;
 
-  // Đã bỏ header "User Management"
+  const roleTemplate = (rowData) => {
+    if (rowData.role === 'admin') {
+      return <Tag value="Admin" severity="danger" className="p-tag-rounded" />;
+    }
+    return <Tag value="User" severity="success" className="p-tag-rounded" />;
+  };
+
   const tableHeader = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-3">
       <form onSubmit={handleSearch} className="p-inputgroup" style={{ width: '300px' }}>
@@ -146,7 +152,7 @@ export default function Index({ auth, users, filters }) {
               }}
               paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} users"
-              rowsPerPageOptions={[10, 25, 50]}
+
               className="p-datatable-sm"
               stripedRows
               responsiveLayout="scroll"
@@ -156,6 +162,7 @@ export default function Index({ auth, users, filters }) {
               <Column field="name" header="Name" sortable style={{ minWidth: '200px' }} className="font-medium" />
               <Column field="email" header="Email" sortable style={{ minWidth: '250px' }} className="text-blue-600" />
               <Column field="phone_number" header="Phone" sortable body={phoneTemplate} style={{ minWidth: '150px' }} />
+              <Column field="role" header="Role" body={roleTemplate} sortable style={{ minWidth: '120px' }} />
               <Column field="created_at" header="Created At" body={dateTemplate} sortable style={{ minWidth: '180px' }} />
               <Column header="Actions" body={actionTemplate} style={{ width: '120px' }} frozen alignFrozen="right" />
             </DataTable>

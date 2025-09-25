@@ -38,16 +38,17 @@ export default function Edit({ category }) {
     };
 
     const cardHeader = (
-        <div className="flex align-items-start gap-3 pb-3">
-            <div className="bg-green-100 p-3 border-round-xl mt-6 ml-4">
+        <div className="flex items-center gap-4 p-4">
+            <div className="bg-green-100 p-3 rounded-xl">
                 <i className="pi pi-sitemap text-green-500 text-2xl"></i>
             </div>
-            <div className="mt-6">
+            <div>
                 <h2 className="text-2xl font-bold text-gray-800 m-0">Edit Category</h2>
                 <p className="text-gray-600 m-0 mt-1">Update category information</p>
             </div>
         </div>
     );
+
 
     return (
         <>

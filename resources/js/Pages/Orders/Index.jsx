@@ -7,7 +7,6 @@ import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Card } from 'primereact/card';
 import { Tag } from 'primereact/tag';
-import { confirmDialog, ConfirmDialog } from 'primereact/confirmdialog';
 import { Toast } from 'primereact/toast';
 
 export default function Index({ auth, orders, filters }) {
@@ -22,41 +21,21 @@ export default function Index({ auth, orders, filters }) {
     });
   };
 
-  const confirmDelete = (order) => {
-    confirmDialog({
-      message: `Are you sure you want to delete order #${order.id}?`,
-      header: 'Confirm Delete',
-      icon: 'pi pi-exclamation-triangle',
-      acceptClassName: 'p-button-danger',
-      accept: () => {
-        router.delete(route('orders.destroy', order.id), {
-          onSuccess: () => {
-            toast.current?.show({
-              severity: 'success',
-              summary: 'Success',
-              detail: 'Order deleted successfully'
-            });
-          }
-        });
-      }
-    });
-  };
-
   const actionTemplate = (rowData) => (
     <div className="flex gap-2">
+      <Button
+        icon="pi pi-eye"
+        className="p-button-rounded p-button-text p-button-help"
+        tooltip="Show"
+        tooltipOptions={{ position: 'top' }}
+        onClick={() => router.visit(route('orders.show', rowData.id))}
+      />
       <Button
         icon="pi pi-pencil"
         className="p-button-rounded p-button-text p-button-info"
         tooltip="Edit"
         tooltipOptions={{ position: 'top' }}
         onClick={() => router.visit(route('orders.edit', rowData.id))}
-      />
-      <Button
-        icon="pi pi-trash"
-        className="p-button-rounded p-button-text p-button-danger"
-        tooltip="Delete"
-        tooltipOptions={{ position: 'top' }}
-        onClick={() => confirmDelete(rowData)}
       />
     </div>
   );
@@ -79,7 +58,7 @@ export default function Index({ auth, orders, filters }) {
   };
 
   const priceTemplate = (rowData) =>
-    rowData.total_price?.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+    rowData.total_price?.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
 
   const tableHeader = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-3">
@@ -96,13 +75,6 @@ export default function Index({ auth, orders, filters }) {
           className="p-button-primary p-button-sm"
         />
       </form>
-
-      <Button
-        icon="pi pi-plus"
-        label="Add order"
-        className="p-button-success p-button-sm"
-        onClick={() => router.visit(route('orders.create'))}
-      />
     </div>
   );
 
@@ -110,7 +82,6 @@ export default function Index({ auth, orders, filters }) {
     <AuthenticatedLayout user={auth.user}>
       <Head title="Order Management" />
       <Toast ref={toast} />
-      <ConfirmDialog />
 
       <div className="py-6">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -153,7 +124,7 @@ export default function Index({ auth, orders, filters }) {
               }}
               paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} orders"
-              rowsPerPageOptions={[10, 25, 50]}
+
               className="p-datatable-sm"
               stripedRows
               responsiveLayout="scroll"
@@ -168,7 +139,6 @@ export default function Index({ auth, orders, filters }) {
             </DataTable>
           </Card>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <Card className="text-center shadow-2">
               <div className="flex align-items-center justify-content-center mb-3">

@@ -67,7 +67,8 @@ class CartController extends Controller
             ]);
         }
 
-        return redirect()->back()->with('success', 'Added to cart successfully.');
+        return redirect()->back();
+        // return redirect()->back()->with('success', 'Added to cart successfully.');
     }
 
     public function update($id, $quantity)

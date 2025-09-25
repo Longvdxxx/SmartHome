@@ -59,7 +59,6 @@ Route::prefix('server')->group(function () {
         Route::put('/orders/{order}', [OrderController::class, 'update'])->name('orders.update');
         Route::delete('/orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
         Route::get('/orders/create', [OrderController::class, 'create'])->name('orders.create');
-        Route::get('/orders/{order}/edit', [OrderController::class, 'edit'])->name('orders.edit');
     });
 
     Route::middleware(['auth'])->group(function () {
@@ -86,6 +85,7 @@ Route::prefix('server')->group(function () {
 
         Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
         Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+        Route::get('/orders/{order}/edit', action: [OrderController::class, 'edit'])->name('orders.edit');
 
         Route::get('/products', [ProductController::class, 'index'])->name('products.index');
         Route::post('/products', [ProductController::class, 'store'])->name('products.store');
@@ -94,12 +94,12 @@ Route::prefix('server')->group(function () {
         Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
         Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
 
-        Route::get('/order-items', [OrderItemController::class, 'index'])->name('order-items.index');
-        Route::post('/order-items', [OrderItemController::class, 'store'])->name('order-items.store');
-        Route::put('/order-items/{orderItem}', [OrderItemController::class, 'update'])->name('order-items.update');
-        Route::delete('/order-items/{orderItem}', [OrderItemController::class, 'destroy'])->name('order-items.destroy');
-        Route::get('/order-items/create', [OrderItemController::class, 'create'])->name('order-items.create');
-        Route::get('/order-items/{orderItem}/edit', [OrderItemController::class, 'edit'])->name('order-items.edit');
+        // Route::get('/order-items', [OrderItemController::class, 'index'])->name('order-items.index');
+        // Route::post('/order-items', [OrderItemController::class, 'store'])->name('order-items.store');
+        // Route::put('/order-items/{orderItem}', [OrderItemController::class, 'update'])->name('order-items.update');
+        // Route::delete('/order-items/{orderItem}', [OrderItemController::class, 'destroy'])->name('order-items.destroy');
+        // Route::get('/order-items/create', [OrderItemController::class, 'create'])->name('order-items.create');
+        // Route::get('/order-items/{orderItem}/edit', [OrderItemController::class, 'edit'])->name('order-items.edit');
 
         Route::get('/product-images', [ProductImageController::class, 'index'])->name('product-images.index');
         Route::post('/product-images', [ProductImageController::class, 'store'])->name('product-images.store');
@@ -114,6 +114,7 @@ Route::prefix('server')->group(function () {
         Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
         Route::get('/reviews/create', [ReviewController::class, 'create'])->name('reviews.create');
         Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
+        Route::get('reviews/{review}', [ReviewController::class, 'show'])->name('reviews.show');
 
         Route::get('/banners', [BannerController::class, 'index'])->name('banners.index');
         Route::post('/banners', [BannerController::class, 'store'])->name('banners.store');
@@ -134,7 +135,7 @@ Route::prefix('shop')->group(function () {
         Route::get('/products/{id}', [ProductPageController::class, 'show'])
             ->name('client.products');
         Route::get('/products', [ProductListController::class, 'index'])
-            ->name('products.index');
+            ->name('client-products.index');
         Route::get('/profile', [CustomerProfileController::class, 'edit'])->name('customer.profile.edit');
         Route::put('/profile', [CustomerProfileController::class, 'update'])->name('customer.profile.update');
 
@@ -150,10 +151,15 @@ Route::prefix('shop')->group(function () {
         Route::get('/checkout', [CheckoutController::class, 'index'])->name('checkout.index');
         Route::post('/checkout/confirm', [CheckoutController::class, 'confirm'])->name('checkout.confirm');
         Route::post('/checkout/place-order', [CheckoutController::class, 'placeOrder'])->name('checkout.placeOrder');
+        Route::post('/checkout/pay', [CheckoutController::class, 'payWithPaypal'])->name('paypal.pay');
+        Route::get('/checkout/paypal-success', [CheckoutController::class, 'paypalSuccess'])->name('paypal.success');
+        Route::get('/checkout/paypal-cancel', [CheckoutController::class, 'paypalCancel'])->name('paypal.cancel');
 
-        Route::get('/orders', [OrderPageController::class, 'index'])->name('orders.index');
-        Route::get('/orders/{order}', [OrderPageController::class, 'show'])->name('orders.show');
-        Route::post('/orders/{order}/cancel', [OrderPageController::class, 'cancel'])->name('orders.cancel');
+        Route::get('/orders', [OrderPageController::class, 'index'])->name('client-order.index');
+        Route::get('/orders/{order}', [OrderPageController::class, 'show'])->name('client-orders.show');
+        Route::post('/orders/{order}/cancel', [OrderPageController::class, 'cancel'])->name('client-orders.cancel');
+        Route::post('/orders/{order}/confirm', [OrderPageController::class, 'confirm'])->name('orders.confirm');
+        Route::post('/orders/{order}/products/{product}/review', [OrderPageController::class, 'review'])->name('orders.review');
     });
 
     Route::middleware(['web','customer.guest'])->group(function () {

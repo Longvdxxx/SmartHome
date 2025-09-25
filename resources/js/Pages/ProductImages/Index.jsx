@@ -167,7 +167,7 @@ export default function Index({ auth, images, products, filters }) {
                             }}
                             paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
                             currentPageReportTemplate={`Showing ${firstRecord} to ${lastRecord} of ${totalRecords} images`}
-                            rowsPerPageOptions={[10, 25, 50]}
+
                             className="p-datatable-sm"
                             stripedRows
                             responsiveLayout="scroll"

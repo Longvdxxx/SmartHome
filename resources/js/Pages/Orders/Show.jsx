@@ -1,154 +1,85 @@
-import { Head } from '@inertiajs/react';
-import { Card } from 'primereact/card';
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Divider } from 'primereact/divider';
-import { Tag } from 'primereact/tag';
+import React from "react";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
-export default function ShowOrder({ order }) {
-    const cardHeader = (
-        <div className="flex align-items-start gap-3 pb-3">
-            <div className="bg-blue-100 p-3 border-round-xl mt-6 ml-4">
-                <i className="pi pi-shopping-cart text-blue-500 text-2xl"></i>
+export default function Show({ auth, order, customer, items }) {
+  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+
+  return (
+    <AuthenticatedLayout user={auth.user}>
+      <div className="container mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-6">Order #{order.id}</h1>
+
+        {/* Customer Info */}
+        <div className="mb-6 border p-4 rounded bg-gray-50">
+          <h2 className="text-xl font-semibold mb-4">Customer Information</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block font-medium">Name</label>
+              <div className="p-2 border rounded bg-white">{customer.name}</div>
             </div>
-            <div className="mt-6">
-                <h2 className="text-2xl font-bold text-gray-800 m-0">Order Details</h2>
-                <p className="text-gray-600 m-0 mt-1">View order information</p>
+            <div>
+              <label className="block font-medium">Email</label>
+              <div className="p-2 border rounded bg-white">{customer.email}</div>
             </div>
+            <div>
+              <label className="block font-medium">Phone</label>
+              <div className="p-2 border rounded bg-white">{customer.phone}</div>
+            </div>
+            <div className="md:col-span-2">
+              <label className="block font-medium">Address</label>
+              <div className="p-2 border rounded bg-white">{customer.address}</div>
+            </div>
+          </div>
         </div>
-    );
 
-    const formatDateTime = (dateString) => {
-        if (!dateString) return 'N/A';
-        const date = new Date(dateString);
-        return date.toLocaleString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-        });
-    };
+        {/* Order Items */}
+        <div className="mb-6 border p-4 rounded">
+          <h2 className="text-xl font-semibold mb-4">Order Items</h2>
+          <table className="w-full table-auto border-collapse text-center">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="border p-2">Image</th>
+                <th className="border p-2">Product</th>
+                <th className="border p-2">Price</th>
+                <th className="border p-2">Quantity</th>
+                <th className="border p-2">Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              {items.map((item) => {
+                const subtotal = item.price * item.quantity;
+                return (
+                  <tr key={item.id}>
+                    <td className="border p-2">
+                      <img
+                        src={item.image_url || "/placeholder.png"}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover mx-auto"
+                      />
+                    </td>
+                    <td className="border p-2">{item.name}</td>
+                    <td className="border p-2">${item.price.toFixed(2)}</td>
+                    <td className="border p-2">{item.quantity}</td>
+                    <td className="border p-2">${subtotal.toFixed(2)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+          <div className="text-right font-bold text-lg mt-4">
+            Total: ${total.toFixed(2)}
+          </div>
+        </div>
 
-    const statusTemplate = (status) => {
-        const statusMap = {
-            pending: { label: 'Pending', severity: 'warning' },
-            processing: { label: 'Processing', severity: 'info' },
-            completed: { label: 'Completed', severity: 'success' },
-            cancelled: { label: 'Cancelled', severity: 'danger' }
-        };
-        const info = statusMap[status] || { label: status, severity: 'secondary' };
-        return <Tag value={info.label} severity={info.severity} />;
-    };
-
-    return (
-        <>
-            <Head title="View Order" />
-            <div className="min-h-screen bg-gray-50 p-6">
-                <div className="p-6">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 w-fit mx-auto">
-                        <Card className="shadow-3" header={cardHeader}>
-                            <form className="space-y-6">
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                                        Basic Information
-                                    </h3>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="field">
-                                            <label className="block font-medium mb-2">Order ID</label>
-                                            <InputText
-                                                value={`#${order.id}`}
-                                                className="w-full"
-                                                disabled
-                                            />
-                                        </div>
-
-                                        <div className="field">
-                                            <label className="block font-medium mb-2">Customer Name</label>
-                                            <InputText
-                                                value={order.customer_name}
-                                                className="w-full"
-                                                disabled
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                                        <div className="field">
-                                            <label className="block font-medium mb-2">Total Amount</label>
-                                            <InputText
-                                                value={`${order.total_amount.toLocaleString()} đ`}
-                                                className="w-full"
-                                                disabled
-                                            />
-                                        </div>
-                                        <div className="field">
-                                            <label className="block font-medium mb-2">Status</label>
-                                            <div className="flex items-center h-full">
-                                                {statusTemplate(order.status)}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <Divider />
-
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div className="field">
-                                        <label className="block font-medium mb-2">Create Time</label>
-                                        <InputText
-                                            value={formatDateTime(order.created_at)}
-                                            className="w-full"
-                                            disabled
-                                        />
-                                    </div>
-                                    <div className="field">
-                                        <label className="block font-medium mb-2">Last Update</label>
-                                        <InputText
-                                            value={formatDateTime(order.updated_at)}
-                                            className="w-full"
-                                            disabled
-                                        />
-                                    </div>
-                                </div>
-
-                                <Divider />
-
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                                        Order Items
-                                    </h3>
-                                    <ul className="list-disc list-inside text-gray-700">
-                                        {order.items && order.items.length > 0 ? (
-                                            order.items.map((item, idx) => (
-                                                <li key={idx}>
-                                                    {item.product_name} — {item.quantity} × {item.price.toLocaleString()} đ
-                                                </li>
-                                            ))
-                                        ) : (
-                                            <li>No items found</li>
-                                        )}
-                                    </ul>
-                                </div>
-
-                                <Divider />
-
-                                <div className="flex gap-3 justify-content-end">
-                                    <Button
-                                        type="button"
-                                        label="Back"
-                                        icon="pi pi-arrow-left"
-                                        severity="secondary"
-                                        onClick={() => window.history.back()}
-                                        className="p-button-outlined"
-                                    />
-                                </div>
-                            </form>
-                        </Card>
-                    </div>
-                </div>
-            </div>
-        </>
-    );
+        <div className="flex space-x-4">
+          <button
+            onClick={() => window.history.back()}
+            className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition"
+          >
+            Back
+          </button>
+        </div>
+      </div>
+    </AuthenticatedLayout>
+  );
 }

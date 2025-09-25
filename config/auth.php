@@ -117,19 +117,24 @@
 return [
 
     'defaults' => [
-        'guard' => 'web', // vẫn để web cho admin
+        'guard' => 'web',
         'passwords' => 'users',
     ],
 
     'guards' => [
-        'web' => [ // admin
+        'web' => [
             'driver' => 'session',
             'provider' => 'users',
         ],
 
-        'customer' => [ // thêm guard cho khách hàng
+        'customer' => [
             'driver' => 'session',
             'provider' => 'customers',
+        ],
+
+        'employee' => [
+            'driver' => 'session',
+            'provider' => 'employees',
         ],
     ],
 
@@ -139,9 +144,14 @@ return [
             'model' => App\Models\User::class,
         ],
 
-        'customers' => [ // thêm provider cho khách hàng
+        'customers' => [ // khách hàng
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
+        ],
+
+        'employees' => [ // nhân viên
+            'driver' => 'eloquent',
+            'model' => App\Models\Employee::class,
         ],
     ],
 
@@ -159,8 +169,16 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
+
+        'employees' => [
+            'provider' => 'employees',
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
     ],
 
     'password_timeout' => 10800,
 
 ];
+

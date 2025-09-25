@@ -60,9 +60,14 @@ export default function ProductPage({ product, relatedProducts }) {
           <div className="flex-1 space-y-4">
             <h1 className="text-3xl font-bold">{product.name}</h1>
             <p className="text-xl text-green-600 font-semibold">{product.price}</p>
-            <p className="text-gray-700">{product.description}</p>
+            <p className="text-gray-700 whitespace-pre-line">{product.description}</p>
             <p className="text-gray-500">Stock: {product.stock}</p>
-            <p className="text-lg font-semibold">⭐ {product.averageRating}/5</p>
+            <p className="text-lg font-semibold">
+              ⭐{" "}
+              {product.reviews.length > 0
+                ? `${product.averageRating}/5`
+                : "No review yet"}
+            </p>
 
             {product.stock > 0 ? (
               <button
@@ -128,29 +133,36 @@ export default function ProductPage({ product, relatedProducts }) {
         {relatedProducts.length > 0 && (
           <div>
             <h2 className="text-2xl font-bold mb-4">You may also like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {relatedProducts.map((p) => (
-                <Link
-                  key={p.id}
-                  href={`/shop/products/${p.id}`}
-                  className="border rounded-lg p-4 hover:shadow bg-gray-100"
-                >
-                  <div className="w-full h-32 flex items-center justify-center bg-gray-200 mb-2 rounded">
-                    {p.image ? (
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="max-h-full max-w-full object-contain"
-                      />
-                    ) : (
-                      <span className="text-gray-500 text-sm">No Image</span>
-                    )}
-                  </div>
-                  <p className="font-bold">{p.name}</p>
-                  <p className="text-green-600">{p.price}</p>
-                </Link>
-              ))}
-            </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                {relatedProducts.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={`/shop/products/${p.id}`}
+                    className="group relative border rounded-lg p-4 bg-gray-50 flex flex-col w-52 h-80
+                              transition-transform duration-300 hover:scale-125 hover:z-50 hover:shadow-2xl"
+                  >
+                    <div className="w-full h-40 bg-gray-200 mb-2 rounded overflow-hidden flex items-center justify-center">
+                      {p.image ? (
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <span className="text-gray-500 text-sm">No Image</span>
+                      )}
+                    </div>
+
+                    <div className="flex flex-col flex-1">
+                      <p className="font-bold text-left overflow-hidden whitespace-nowrap text-ellipsis
+                                    group-hover:whitespace-normal group-hover:break-words group-hover:overflow-visible">
+                        {p.name}
+                      </p>
+                      <p className="text-green-600 text-left">{p.price}</p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
           </div>
         )}
 

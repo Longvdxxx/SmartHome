@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Button } from 'primereact/button';
@@ -42,24 +42,29 @@ export default function Index({ auth, customers, filters }) {
     });
   };
 
-  const actionTemplate = (rowData) => (
-    <div className="flex gap-2">
-      <Button
-        icon="pi pi-pencil"
-        className="p-button-rounded p-button-text p-button-info"
-        tooltip="Edit"
-        tooltipOptions={{ position: 'top' }}
-        onClick={() => router.visit(route('customers.edit', rowData.id))}
-      />
-      <Button
-        icon="pi pi-trash"
-        className="p-button-rounded p-button-text p-button-danger"
-        tooltip="Delete"
-        tooltipOptions={{ position: 'top' }}
-        onClick={() => confirmDelete(rowData)}
-      />
-    </div>
-  );
+  const actionTemplate = (rowData) => {
+    if (auth.user.role === 'admin') {
+      return (
+        <div className="flex gap-2">
+          <Button
+            icon="pi pi-pencil"
+            className="p-button-rounded p-button-text p-button-info"
+            tooltip="Edit"
+            tooltipOptions={{ position: 'top' }}
+            onClick={() => router.visit(route('customers.edit', rowData.id))}
+          />
+          <Button
+            icon="pi pi-trash"
+            className="p-button-rounded p-button-text p-button-danger"
+            tooltip="Delete"
+            tooltipOptions={{ position: 'top' }}
+            onClick={() => confirmDelete(rowData)}
+          />
+        </div>
+      );
+    }
+    return <div className="text-gray-400 italic">No actions</div>;
+  };
 
   const dateTemplate = (rowData) => new Date(rowData.created_at).toLocaleDateString('vi-VN', {
     year: 'numeric',
@@ -70,6 +75,15 @@ export default function Index({ auth, customers, filters }) {
   });
 
   const idTemplate = (rowData) => <Tag value={`#${rowData.id}`} className="p-tag-rounded" />;
+
+  const nameTemplate = (rowData) => (
+    <Link
+      href={route('customers.show', rowData.id)}
+      className="text-blue-600 hover:underline"
+    >
+      {rowData.name}
+    </Link>
+  );
 
   const tableHeader = (
     <div className="flex flex-wrap align-items-center justify-content-between gap-3">
@@ -87,12 +101,14 @@ export default function Index({ auth, customers, filters }) {
         />
       </form>
 
-      <Button
-        icon="pi pi-plus"
-        label="Add customer"
-        className="p-button-success p-button-sm"
-        onClick={() => router.visit(route('customers.create'))}
-      />
+      {auth.user.role === 'admin' && (
+        <Button
+          icon="pi pi-plus"
+          label="Add customer"
+          className="p-button-success p-button-sm"
+          onClick={() => router.visit(route('customers.create'))}
+        />
+      )}
     </div>
   );
 
@@ -143,22 +159,23 @@ export default function Index({ auth, customers, filters }) {
               }}
               paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} customers"
-              rowsPerPageOptions={[10, 25, 50]}
+
               className="p-datatable-sm"
               stripedRows
               responsiveLayout="scroll"
               emptyMessage="No customers found"
             >
               <Column field="id" header="ID" body={idTemplate} sortable style={{ width: '80px' }} />
-              <Column field="name" header="Name" sortable style={{ minWidth: '200px' }} className="font-medium" />
+              <Column field="name" header="Name" body={nameTemplate} sortable style={{ minWidth: '200px' }} className="font-medium" />
               <Column field="email" header="Email" sortable style={{ minWidth: '250px' }} />
               <Column field="phone" header="Phone" sortable style={{ minWidth: '150px' }} />
               <Column field="created_at" header="Created At" body={dateTemplate} sortable style={{ minWidth: '180px' }} />
-              <Column header="Actions" body={actionTemplate} style={{ width: '120px' }} frozen alignFrozen="right" />
+              {auth.user.role === 'admin' && (
+                <Column header="Actions" body={actionTemplate} style={{ width: '120px' }} frozen alignFrozen="right" />
+              )}
             </DataTable>
           </Card>
 
-          {/* Stats Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <Card className="text-center shadow-2">
               <div className="flex align-items-center justify-content-center mb-3">

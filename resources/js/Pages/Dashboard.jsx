@@ -1,4 +1,3 @@
-// resources/js/Pages/Dashboard.jsx
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import {
@@ -12,9 +11,11 @@ import {
     List,
     FileImage,
     Star,
+    LayoutDashboard, // icon cho Dashboard
 } from 'lucide-react';
 
 const navigationCards = [
+    { title: "Dashboard", description: "Overview of the system", icon: LayoutDashboard, route: "/server/dashboard" },
     { title: "Users", description: "Manage registered users", icon: Users, route: route("users.index") },
     { title: "Brands", description: "Manage product brands", icon: Tag, route: route("brands.index") },
     { title: "Categories", description: "Organize product categories", icon: LayoutGrid, route: route("categories.index") },
@@ -22,7 +23,6 @@ const navigationCards = [
     { title: "Customers", description: "Customer information", icon: UserCheck, route: route("customers.index") },
     { title: "Products", description: "Manage product list", icon: Package, route: route("products.index") },
     { title: "Orders", description: "View and track orders", icon: ShoppingCart, route: route("orders.index") },
-    { title: "Order Items", description: "Order item details", icon: List, route: route("order-items.index") },
     { title: "Product Images", description: "Manage product images", icon: FileImage, route: route("product-images.index") },
     { title: "Reviews", description: "Customer reviews", icon: Star, route: route("reviews.index") },
 ];

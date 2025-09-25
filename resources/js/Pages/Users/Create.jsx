@@ -1,11 +1,12 @@
 import { useState, useRef } from 'react';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { Toast } from 'primereact/toast';
 import { Divider } from 'primereact/divider';
+import { Dropdown } from 'primereact/dropdown';
 
 export default function CreateUser() {
     const toast = useRef(null);
@@ -17,12 +18,17 @@ export default function CreateUser() {
         phone_number: '',
         password: '',
         password_confirmation: '',
+        role: 'user',
     });
+
+    const roles = [
+        { label: 'User', value: 'user' },
+        { label: 'Admin', value: 'admin' }
+    ];
 
     const submit = (e) => {
         e.preventDefault();
         setLoading(true);
-
         post(route('users.store'), {
             onSuccess: () => {
                 toast.current?.show({
@@ -61,32 +67,27 @@ export default function CreateUser() {
                 <i className="pi pi-user-plus text-blue-500 text-2xl"></i>
             </div>
             <div>
-                <h2 className="text-2xl font-bold text-gray-800 m-0">Create New Customer</h2>
-                <p className="text-gray-600 m-0 mt-1">Add a new customer to the system</p>
+                <h2 className="text-2xl font-bold text-gray-800 m-0">Create New User</h2>
+                <p className="text-gray-600 m-0 mt-1">Add a new user to the system</p>
             </div>
         </div>
     );
-
 
     return (
         <>
             <Head title="Create User" />
             <Toast ref={toast} />
-
             <div className="min-h-screen bg-gray-50 p-6">
                 <div className="p-6">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 w-fit mx-auto">
-                        {/* Main Form */}
                         <div className="lg:col-span-2">
                             <Card className="shadow-3" header={cardHeader}>
                                 <form onSubmit={submit} className="space-y-6">
-                                    {/* Basic Information Section */}
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex align-items-center gap-2">
                                             <i className="pi pi-info-circle text-blue-500"></i>
                                             Basic Information
                                         </h3>
-
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="field">
                                                 <label htmlFor="name" className="block text-900 font-medium mb-2">
@@ -103,7 +104,6 @@ export default function CreateUser() {
                                                     <small className="p-error block mt-1">{errors.name}</small>
                                                 )}
                                             </div>
-
                                             <div className="field">
                                                 <label htmlFor="phone_number" className="block text-900 font-medium mb-2">
                                                     Phone Number
@@ -120,7 +120,6 @@ export default function CreateUser() {
                                                 )}
                                             </div>
                                         </div>
-
                                         <div className="field mt-4">
                                             <label htmlFor="email" className="block text-900 font-medium mb-2">
                                                 Email Address <span className="text-red-500">*</span>
@@ -137,17 +136,29 @@ export default function CreateUser() {
                                                 <small className="p-error block mt-1">{errors.email}</small>
                                             )}
                                         </div>
+                                        <div className="field mt-4">
+                                            <label htmlFor="role" className="block text-900 font-medium mb-2">
+                                                Role <span className="text-red-500">*</span>
+                                            </label>
+                                            <Dropdown
+                                                id="role"
+                                                value={data.role}
+                                                options={roles}
+                                                onChange={(e) => setData('role', e.value)}
+                                                className={`w-full p-inputtext ${errors.role ? 'p-invalid' : ''}`}
+                                                placeholder="Select role"
+                                            />
+                                            {errors.role && (
+                                                <small className="p-error block mt-1">{errors.role}</small>
+                                            )}
+                                        </div>
                                     </div>
-
                                     <Divider />
-
-                                    {/* Security Section */}
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-800 mb-4 flex align-items-center gap-2">
                                             <i className="pi pi-shield text-green-500"></i>
                                             Security
                                         </h3>
-
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                             <div className="field">
                                                 <label htmlFor="password" className="block text-900 font-medium mb-2">
@@ -170,7 +181,6 @@ export default function CreateUser() {
                                                     <small className="p-error block mt-1">{errors.password}</small>
                                                 )}
                                             </div>
-
                                             <div className="field">
                                                 <label htmlFor="password_confirmation" className="block text-900 font-medium mb-2">
                                                     Confirm Password <span className="text-red-500">*</span>
@@ -190,10 +200,7 @@ export default function CreateUser() {
                                             </div>
                                         </div>
                                     </div>
-
                                     <Divider />
-
-                                    {/* Action Buttons */}
                                     <div className="flex gap-3 justify-content-end">
                                         <Button
                                             type="button"
@@ -214,8 +221,6 @@ export default function CreateUser() {
                                 </form>
                             </Card>
                         </div>
-
-                        {/* Sidebar */}
                         <div className="lg:col-span-1">
                             <Card className="shadow-3 mb-4">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-3 flex align-items-center gap-2">
@@ -237,11 +242,10 @@ export default function CreateUser() {
                                     </li>
                                     <li className="flex align-items-start gap-2">
                                         <i className="pi pi-check text-green-500 mt-1"></i>
-                                        User will receive login credentials via email
+                                        Assign correct role (User or Admin) for permissions
                                     </li>
                                 </ul>
                             </Card>
-
                             <Card className="shadow-3">
                                 <h3 className="text-lg font-semibold text-gray-800 mb-3 flex align-items-center gap-2">
                                     <i className="pi pi-cog text-gray-500"></i>

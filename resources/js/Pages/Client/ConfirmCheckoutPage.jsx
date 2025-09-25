@@ -88,7 +88,6 @@ export default function ConfirmCheckoutPage({ cart, customer, total, csrfToken }
           </button>
 
           <form action="/shop/checkout/place-order" method="post">
-            {/* CSRF token từ server */}
             <input type="hidden" name="_token" value={csrfToken} />
             <input type="hidden" name="name" value={customer.name} />
             <input type="hidden" name="email" value={customer.email} />

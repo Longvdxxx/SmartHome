@@ -29337,3 +29337,17 @@ pre.app-code code {
   background: #ECCFFF;
   color: #694382;
 }
+.p-confirm-dialog .p-dialog-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+.p-confirm-dialog .p-button {
+    min-width: 80px;
+}
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

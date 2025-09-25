@@ -46,11 +46,11 @@ export default function Index({ auth, reviews, filters }) {
   const actionTemplate = (rowData) => (
     <div className="flex gap-2">
       <Button
-        icon="pi pi-pencil"
+        icon="pi pi-eye"
         className="p-button-rounded p-button-text p-button-info"
-        tooltip="Edit"
+        tooltip="Show"
         tooltipOptions={{ position: 'top' }}
-        onClick={() => router.visit(route('reviews.edit', rowData.id))}
+        onClick={() => router.visit(route('reviews.show', rowData.id))}
       />
       <Button
         icon="pi pi-trash"
@@ -94,13 +94,6 @@ export default function Index({ auth, reviews, filters }) {
           className="p-button-primary p-button-sm"
         />
       </form>
-
-      <Button
-        icon="pi pi-plus"
-        label="Add Review"
-        className="p-button-success p-button-sm"
-        onClick={() => router.visit(route('reviews.create'))}
-      />
     </div>
   );
 
@@ -151,7 +144,7 @@ export default function Index({ auth, reviews, filters }) {
               }}
               paginatorTemplate="FirstPageLink PrevPageLink CurrentPageReport NextPageLink LastPageLink RowsPerPageDropdown"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} reviews"
-              rowsPerPageOptions={[10, 25, 50]}
+
               className="p-datatable-sm"
               stripedRows
               responsiveLayout="scroll"
@@ -167,7 +160,6 @@ export default function Index({ auth, reviews, filters }) {
             </DataTable>
           </Card>
 
-          {/* Dashboard Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <Card className="text-center shadow-2">
               <div className="flex align-items-center justify-content-center mb-3">

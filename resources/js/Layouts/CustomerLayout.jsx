@@ -71,10 +71,7 @@ export default function CustomerLayout({ children }) {
 
       const data = await res.json();
 
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: data.reply },
-      ]);
+      setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
     } catch (error) {
       setMessages((prev) => [
         ...prev,
@@ -99,34 +96,50 @@ export default function CustomerLayout({ children }) {
 
       <header className="bg-white shadow-md sticky top-0 z-40">
         <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-6">
-          <Link href="/" className="text-2xl font-bold text-blue-600">
-            MyShop
+          <Link href="/shop/dashboard" className="text-2xl font-bold">
+            <span className="text-blue-600">Smart</span>
+            <span className="text-gray-800">Shop</span>
           </Link>
+
           <form onSubmit={handleSearch} className="flex items-center w-1/2">
             <input
               type="text"
               placeholder="Search products..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full border rounded-l px-3 py-2"
+              className="w-full border rounded-l px-3 py-2 h-11"
             />
             <button
               type="submit"
-              className="bg-blue-600 text-white px-4 py-2 rounded-r"
+              className="bg-blue-600 text-white px-4 h-11 flex items-center justify-center rounded-r"
             >
-              Search
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-7 w-7 font-bold"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={3}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z"
+                />
+              </svg>
             </button>
           </form>
+
           <div className="flex items-center space-x-6">
             <div ref={catRef} className="relative">
               <button
                 onClick={() => setOpenCat(!openCat)}
-                className="text-gray-700 hover:text-blue-600"
+                className="px-3 py-2 text-gray-700 hover:text-blue-600 border rounded"
               >
                 Categories
               </button>
               {openCat && (
-                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded border z-50">
+                <div className="absolute left-0 mt-1 min-w-full bg-white shadow-lg rounded border z-50">
                   {categories.map((c) => (
                     <Link
                       key={c.id}
@@ -139,15 +152,16 @@ export default function CustomerLayout({ children }) {
                 </div>
               )}
             </div>
+
             <div ref={brandRef} className="relative">
               <button
                 onClick={() => setOpenBrand(!openBrand)}
-                className="text-gray-700 hover:text-blue-600"
+                className="px-3 py-2 text-gray-700 hover:text-blue-600 border rounded"
               >
                 Brands
               </button>
               {openBrand && (
-                <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded border z-50">
+                <div className="absolute left-0 mt-1 min-w-full bg-white shadow-lg rounded border z-50">
                   {brands.map((b) => (
                     <Link
                       key={b.id}
@@ -160,39 +174,57 @@ export default function CustomerLayout({ children }) {
                 </div>
               )}
             </div>
-            <Link href="/shop/cart" className="relative text-gray-700 hover:text-blue-600">
-              Cart
+
+            <Link
+              href="/shop/cart"
+              className="relative text-gray-700 hover:text-blue-600"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-8 w-8"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5 21h14l-2-8H7zM16 21a2 2 0 11-4 0m8 0a2 2 0 11-4 0"
+                />
+              </svg>
               {cartCount > 0 && (
                 <span className="absolute -top-2 -right-3 bg-red-600 text-white text-xs font-bold px-2 py-0.5 rounded-full">
                   {cartCount}
                 </span>
               )}
             </Link>
+
             <div ref={customerRef} className="relative">
               {customer ? (
                 <>
                   <button
                     onClick={() => setOpenCustomer(!openCustomer)}
-                    className="text-gray-700 hover:text-blue-600"
+                    className="px-3 py-2 text-gray-700 hover:text-blue-600 border rounded"
                   >
                     {customer.name}
                   </button>
                   {openCustomer && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded border z-50">
+                    <div className="absolute left-0 mt-1 min-w-full bg-white shadow-lg rounded border z-50">
                       <Link
-                        href="/customer/profile"
+                        href="/shop/profile"
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
                         Profile
                       </Link>
                       <Link
-                        href="/customer/orders"
+                        href="/shop/orders"
                         className="block px-4 py-2 hover:bg-gray-100"
                       >
                         Orders
                       </Link>
                       <Link
-                        href="/customer/logout"
+                        href="/shop/logout"
                         method="post"
                         as="button"
                         className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
@@ -203,7 +235,10 @@ export default function CustomerLayout({ children }) {
                   )}
                 </>
               ) : (
-                <Link href="/customer/login" className="text-gray-700 hover:text-blue-600">
+                <Link
+                  href="/customer/login"
+                  className="text-gray-700 hover:text-blue-600"
+                >
                   Login
                 </Link>
               )}
@@ -215,7 +250,7 @@ export default function CustomerLayout({ children }) {
       <main className="flex-1 bg-gray-50 p-6">{children}</main>
 
       <footer className="bg-gray-800 text-white text-center py-4">
-        © {new Date().getFullYear()} MyShop. All rights reserved.
+        © {new Date().getFullYear()} SmartShop. All rights reserved.
       </footer>
 
       <div className="fixed bottom-6 right-6">
