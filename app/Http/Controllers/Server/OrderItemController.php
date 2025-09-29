@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Server;
 
 use App\Models\OrderItem;
 use App\Models\Order;
-use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Services\LogService;
 
 class OrderItemController extends Controller
 {
@@ -54,7 +55,15 @@ class OrderItemController extends Controller
             'price'      => 'required|numeric|min:0'
         ]);
 
-        OrderItem::create($request->only('order_id', 'product_id', 'quantity', 'price'));
+        $orderItem = OrderItem::create($request->only('order_id', 'product_id', 'quantity', 'price'));
+
+        // LogService create
+        LogService::log(
+            'create_order_item',
+            "Created order item #{$orderItem->id}",
+            null,
+            $orderItem
+        );
 
         return redirect()->route('order-items.index')->with('success', 'Order item created successfully.');
     }
@@ -77,7 +86,26 @@ class OrderItemController extends Controller
             'price'      => 'required|numeric|min:0'
         ]);
 
+        $old = $orderItem->getOriginal(); // lưu dữ liệu cũ
         $orderItem->update($request->only('order_id', 'product_id', 'quantity', 'price'));
+
+        // Log JSON chi tiết thay đổi
+        $changes = [];
+        foreach ($orderItem->getChanges() as $field => $value) {
+            $changes[$field] = [
+                'old' => $old[$field] ?? null,
+                'new' => $value
+            ];
+        }
+
+        // LogService update
+        LogService::log(
+            'update_order_item',
+            "Updated order item #{$orderItem->id}",
+            null,
+            $orderItem,
+            $changes
+        );
 
         return redirect()->route('order-items.index')->with('success', 'Order item updated successfully.');
     }
@@ -85,6 +113,15 @@ class OrderItemController extends Controller
     public function destroy(OrderItem $orderItem)
     {
         $orderItem->delete();
+
+        // LogService delete
+        LogService::log(
+            'delete_order_item',
+            "Deleted order item #{$orderItem->id}",
+            null,
+            $orderItem
+        );
+
         return redirect()->back()->with('success', 'Order item deleted.');
     }
 }

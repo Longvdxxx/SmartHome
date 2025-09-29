@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\HasLogs;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
@@ -12,7 +13,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasLogs;
 
     /**
      * The attributes that are mass assignable.

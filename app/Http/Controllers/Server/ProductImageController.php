@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Services\LogService;
 
 class ProductImageController extends Controller
 {
@@ -36,7 +37,6 @@ class ProductImageController extends Controller
         ]);
     }
 
-
     public function create()
     {
         $products = Product::with(['category', 'brand'])
@@ -55,13 +55,14 @@ class ProductImageController extends Controller
             'image' => 'required|image|max:20480',
         ]);
 
-        // Lưu file vào storage/public/product_images
         $path = $request->file('image')->store('product_images', 'public');
 
-        ProductImage::create([
+        $productImage = ProductImage::create([
             'product_id' => $request->product_id,
             'url'        => 'storage/' . $path
         ]);
+
+        LogService::log('create_product_image', "Created image #{$productImage->id} for product #{$productImage->product_id}", null, $productImage);
 
         return redirect()->route('product-images.index', $request->product_id)
             ->with('success', 'Image uploaded successfully.');
@@ -86,7 +87,8 @@ class ProductImageController extends Controller
             'image' => 'nullable|image|max:20480',
         ]);
 
-        // Update product_id if changed
+        $old = $productImage->getOriginal();
+
         if ($request->product_id != $productImage->product_id) {
             $productImage->update(['product_id' => $request->product_id]);
         }
@@ -98,10 +100,18 @@ class ProductImageController extends Controller
 
             $path = $request->file('image')->store('product_images', 'public');
 
-            $productImage->update([
-                'url' => 'storage/' . $path
-            ]);
+            $productImage->update(['url' => 'storage/' . $path]);
         }
+
+        $changes = [];
+        foreach ($productImage->getChanges() as $field => $value) {
+            $changes[$field] = [
+                'old' => $old[$field] ?? null,
+                'new' => $value
+            ];
+        }
+
+        LogService::log('update_product_image', "Updated image #{$productImage->id}", null, $productImage, $changes);
 
         return redirect()->route('product-images.index', $productImage->product_id)
             ->with('success', 'Image updated successfully.');
@@ -116,6 +126,8 @@ class ProductImageController extends Controller
         }
 
         $productImage->delete();
+
+        LogService::log('delete_product_image', "Deleted image #{$productImage->id} for product #{$productId}", null, $productImage);
 
         return redirect()->route('product-images.index', $productId)
             ->with('success', 'Image deleted successfully.');

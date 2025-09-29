@@ -38,10 +38,10 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 <NavLink href={route('orders.index')} active={route().current('orders.index')}>
                                     Orders
                                 </NavLink>
-                                <NavLink href="#" active={route().current('employees.index')}>
+                                <NavLink href={route('employees.index')} active={route().current('employees.index')}>
                                     Employees
                                 </NavLink>
-                                <NavLink href="#" active={route().current('stores.index')}>
+                                <NavLink href={route('stores.index')} active={route().current('stores.index')}>
                                     Stores
                                 </NavLink>
                                 <Dropdown>
@@ -173,10 +173,10 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         <ResponsiveNavLink href={route('orders.index')} active={route().current('orders.index')}>
                             Orders
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href="#" active={route().current('employees.index')}>
+                        <ResponsiveNavLink href={route('employees.index')} active={route().current('employees.index')}>
                             Employees
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href="#" active={route().current('stores.index')}>
+                        <ResponsiveNavLink href={route('stores.index')} active={route().current('stores.index')}>
                             Stores
                         </ResponsiveNavLink>
                         <div className="pl-3">

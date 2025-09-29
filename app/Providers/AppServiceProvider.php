@@ -9,6 +9,12 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\CartItem;
 
+use App\Models\User;
+use App\Models\Employee;
+use App\Models\Customer;
+use App\Models\Product;
+use App\Observers\ActivityObserver;
+
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
@@ -18,14 +24,21 @@ class AppServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
+        User::observe(ActivityObserver::class);
+        Employee::observe(ActivityObserver::class);
+        Customer::observe(ActivityObserver::class);
+        Product::observe(ActivityObserver::class);
+
         Inertia::share([
             'auth' => function () {
                 $user = Auth::guard('web')->user();
                 $customer = Auth::guard('customer')->user();
+                $employee = Auth::guard('employee')->user();
 
                 logger('Auth share:', [
-                    'user' => $user ? $user->toArray() : null,
+                    'user'     => $user ? $user->toArray() : null,
                     'customer' => $customer ? $customer->toArray() : null,
+                    'employee' => $employee ? $employee->toArray() : null,
                 ]);
 
                 return [
@@ -42,6 +55,14 @@ class AppServiceProvider extends ServiceProvider
                         'name'  => $customer->name,
                         'email' => $customer->email,
                         'phone' => $customer->phone ?? null,
+                    ] : null,
+
+                    'employee' => $employee ? [
+                        'id'    => $employee->id,
+                        'name'  => $employee->name,
+                        'email' => $employee->email,
+                        'role'  => $employee->role,
+                        'store_id' => $employee->store_id,
                     ] : null,
                 ];
             },

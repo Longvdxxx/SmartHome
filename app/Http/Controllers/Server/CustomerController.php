@@ -16,12 +16,17 @@ class CustomerController extends Controller
             ->when($request->search, fn($q) => $q->where('name', 'like', "%{$request->search}%"))
             ->orderBy($request->sortField ?? 'created_at', $request->sortOrder == -1 ? 'desc' : 'asc');
 
-        // Nếu là user thường thì chỉ lấy các trường cần thiết
         if (auth()->user()->role === 'user') {
             $query->select(['id', 'name', 'email', 'phone', 'created_at']);
         }
 
         $customers = $query->paginate(10)->appends(request()->query());
+
+        logger('Customer index accessed', [
+            'user_id' => auth()->id(),
+            'filters' => $request->only('search', 'sortField', 'sortOrder'),
+            'total'   => $customers->total(),
+        ]);
 
         return Inertia::render('Customers/Index', [
             'customers' => $customers,
@@ -34,7 +39,6 @@ class CustomerController extends Controller
         ]);
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
@@ -44,11 +48,17 @@ class CustomerController extends Controller
             'phone'    => 'nullable|string|max:20',
         ]);
 
-        Customer::create([
+        $customer = Customer::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'phone'    => $request->phone,
+        ]);
+
+        logger('Customer created', [
+            'user_id'    => auth()->id(),
+            'customer_id'=> $customer->id,
+            'data'       => $customer->toArray(),
         ]);
 
         return redirect()->route('customers.index')->with('success', 'Customer created successfully.');
@@ -62,10 +72,19 @@ class CustomerController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
+        $old = $customer->toArray();
+
         $customer->update([
             'name'  => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
+        ]);
+
+        logger('Customer updated', [
+            'user_id'     => auth()->id(),
+            'customer_id' => $customer->id,
+            'before'      => $old,
+            'after'       => $customer->toArray(),
         ]);
 
         return redirect()->route('customers.index')->with('success', 'Customer updated successfully.');
@@ -73,12 +92,25 @@ class CustomerController extends Controller
 
     public function destroy(Customer $customer)
     {
+        $deleted = $customer->toArray();
         $customer->delete();
+
+        logger('Customer deleted', [
+            'user_id'     => auth()->id(),
+            'customer_id' => $deleted['id'] ?? null,
+            'data'        => $deleted,
+        ]);
+
         return redirect()->back()->with('success', 'Customer deleted.');
     }
 
     public function edit(Customer $customer)
     {
+        logger('Customer edit page accessed', [
+            'user_id'     => auth()->id(),
+            'customer_id' => $customer->id,
+        ]);
+
         return Inertia::render('Customers/Edit', [
             'customer' => $customer
         ]);
@@ -86,6 +118,10 @@ class CustomerController extends Controller
 
     public function create(Customer $customer)
     {
+        logger('Customer create page accessed', [
+            'user_id' => auth()->id(),
+        ]);
+
         return Inertia::render('Customers/Create', [
             'customer' => $customer
         ]);
@@ -93,9 +129,13 @@ class CustomerController extends Controller
 
     public function show(Customer $customer)
     {
+        logger('Customer show page accessed', [
+            'user_id'     => auth()->id(),
+            'customer_id' => $customer->id,
+        ]);
+
         return Inertia::render('Customers/Show', [
             'customer' => $customer
         ]);
     }
-
 }

@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
+use App\Services\LogService;
 
 class ProductController extends Controller
 {
@@ -56,7 +57,7 @@ class ProductController extends Controller
             'description'   => 'nullable|string',
             'price'         => 'required|numeric|min:0',
             'stock'         => 'required|integer|min:0',
-            'default_image' => 'nullable|image|max:20480', // thêm validate ảnh
+            'default_image' => 'nullable|image|max:20480',
         ]);
 
         $data = $request->only('category_id', 'brand_id', 'name', 'description', 'price', 'stock');
@@ -66,7 +67,9 @@ class ProductController extends Controller
             $data['default_image'] = 'storage/' . $path;
         }
 
-        Product::create($data);
+        $product = Product::create($data);
+
+        LogService::log('create_product', "Created product: {$product->name}", null, $product);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
@@ -94,9 +97,7 @@ class ProductController extends Controller
 
         $data = $request->only('category_id', 'brand_id', 'name', 'description', 'price', 'stock');
 
-        // Nếu có upload ảnh mới
         if ($request->hasFile('default_image')) {
-            // Xóa ảnh cũ nếu có
             if ($product->default_image && Storage::exists(str_replace('storage/', 'public/', $product->default_image))) {
                 Storage::delete(str_replace('storage/', 'public/', $product->default_image));
             }
@@ -105,19 +106,33 @@ class ProductController extends Controller
             $data['default_image'] = 'storage/' . $path;
         }
 
+        $old = $product->getOriginal();
         $product->update($data);
+
+        $changes = [];
+        foreach ($product->getChanges() as $field => $value) {
+            $changes[$field] = [
+                'old' => $old[$field] ?? null,
+                'new' => $value
+            ];
+        }
+
+        LogService::log('update_product', "Updated product: {$product->name}", null, $product, $changes);
 
         return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
 
     public function destroy(Product $product)
     {
-        // Xóa ảnh mặc định nếu có
         if ($product->default_image && Storage::exists(str_replace('storage/', 'public/', $product->default_image))) {
             Storage::delete(str_replace('storage/', 'public/', $product->default_image));
         }
 
+        $name = $product->name;
         $product->delete();
+
+        LogService::log('delete_product', "Deleted product: {$name}", null, $product);
+
         return redirect()->back()->with('success', 'Product deleted.');
     }
 }

@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
-
+use App\Services\LogService;
 class BrandController extends Controller
 {
     public function index(Request $request)
@@ -41,9 +41,13 @@ class BrandController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-        Brand::create([
+
+        $brand = Brand::create([
             'name' => $request->name,
         ]);
+
+        LogService::log('create_brand', "Created brand: {$brand->name}", null, $brand);
+
         return redirect()->route('brands.index')->with('success', 'Brand created successfully.');
     }
 
@@ -52,15 +56,31 @@ class BrandController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
-        $brand->update([
-            'name' => $request->name,
-        ]);
+
+        $old = $brand->getOriginal();
+        $brand->update(['name' => $request->name]);
+
+        $changes = [];
+        foreach ($brand->getChanges() as $field => $value) {
+            $changes[$field] = [
+                'old' => $old[$field] ?? null,
+                'new' => $value
+            ];
+        }
+
+        LogService::log('update_brand', "Updated brand: {$brand->name}", null, $brand, $changes);
+
         return redirect()->route('brands.index')->with('success', 'Brand updated successfully.');
     }
 
     public function destroy(Brand $brand)
     {
+        $brandName = $brand->name;
+
         $brand->delete();
+
+        LogService::log('delete_brand', "Deleted brand: {$brandName}", null, $brand);
+
         return redirect()->back()->with('success', 'Brand deleted.');
     }
 

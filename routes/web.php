@@ -4,9 +4,12 @@ use App\Http\Controllers\Server\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-use App\Http\Controllers\Server\{ProductController, CategoryController, BrandController, BannerController, ReviewController, ProductImageController, OrderItemController, OrderController, CustomerController, UserController};
+use App\Http\Controllers\Server\{ProductController, CategoryController, BrandController, BannerController, ReviewController, ProductImageController, OrderItemController, OrderController, CustomerController, UserController, EmployeeController, StoreController, LogController};
 use App\Http\Controllers\Client\{DashboardController, ProductPageController, CustomerAuthController, SelectRoleController, ProductListController, CheckoutController, CartController, OrderPageController};
 use App\Http\Controllers\Client\CustomerProfileController;
+use App\Http\Controllers\Employee\{EmployeeAuthController, EmployeeCustomerController, EmployeeStoreController};
+use App\Models\Employee;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -42,6 +45,8 @@ Route::prefix('server')->group(function () {
     })->name('button');
 
     Route::middleware(['auth', 'isAdmin'])->group(function () {
+        Route::get('/admin/logs', [LogController::class, 'index'])->name('logs.index');
+
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
         Route::post('/users', [UserController::class, 'store'])->name('users.store');
         Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
@@ -122,13 +127,29 @@ Route::prefix('server')->group(function () {
         Route::delete('/banners/{banner}', [BannerController::class, 'destroy'])->name('banners.destroy');
         Route::get('/banners/create', [BannerController::class, 'create'])->name('banners.create');
         Route::get('/banners/{banner}/edit', [BannerController::class, 'edit'])->name('banners.edit');
+
+        Route::post('/employees', [EmployeeController::class, 'store'])->name('employees.store');
+        Route::put('/employees/{employee}', [EmployeeController::class, 'update'])->name('employees.update');
+        Route::delete('/employees/{employee}', [EmployeeController::class, 'destroy'])->name('employees.destroy');
+        Route::get('/employees/create', [EmployeeController::class, 'create'])->name('employees.create');
+        Route::get('/employees/{employee}/edit', [EmployeeController::class, 'edit'])->name('employees.edit');
+        Route::get('/employees', [EmployeeController::class, 'index'])->name('employees.index');
+        Route::get('/employees/{employee}', [EmployeeController::class, 'show'])->name('employees.show');
+
+        Route::get('/stores', [StoreController::class, 'index'])->name('stores.index');
+        Route::post('/stores', [StoreController::class, 'store'])->name('stores.store');
+        Route::put('/stores/{store}', [StoreController::class, 'update'])->name('stores.update');
+        Route::delete('/stores/{store}', [StoreController::class, 'destroy'])->name('stores.destroy');
+        Route::get('/stores/create', [StoreController::class, 'create'])->name('stores.create');
+        Route::get('/stores/{store}/edit', [StoreController::class, 'edit'])->name('stores.edit');
+        Route::get('/{store}/inventory', [StoreController::class, 'inventory'])->name('stores.inventory');
+        Route::put('/{store}/inventory/{inventory}', [StoreController::class, 'updateInventory'])->name('stores.inventory.update');
     });
 
     require __DIR__.'/auth.php';
 });
 
 Route::prefix('shop')->group(function () {
-
     Route::middleware(['web', 'customer.auth'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'index'])
             ->name('client.dashboard');
@@ -176,4 +197,27 @@ Route::prefix('shop')->group(function () {
         ->name('client.logout');
      Route::get('/logout', [CustomerAuthController::class, 'logout'])
         ->name('client.getLogout');
+});
+
+Route::prefix('staff')->group(function () {
+    Route::get('/login', [EmployeeAuthController::class, 'showLogin'])->name('staff.login');
+    Route::post('/login', [EmployeeAuthController::class, 'login'])->name('staff.login.submit');
+    Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('staff.logout');
+
+    Route::middleware(['web', 'employee.auth', 'share.employee'])->group(function () {
+        Route::get('/dashboard', fn () => inertia('Staff/Dashboard'))->name('staff.dashboard');
+        Route::get('/stores/{store}/inventory', [EmployeeStoreController::class, 'inventory'])->name('staff.stores.inventory');
+
+        Route::middleware('employee.role:manager,cashier')->group(function () {
+            Route::get('/customers', [EmployeeCustomerController::class, 'index'])->name('staff.customers.index');
+            Route::post('/customers', [EmployeeCustomerController::class, 'store'])->name('staff.customers.store');
+        });
+
+        Route::middleware('employee.role:manager,stock')->group(function () {
+            Route::put('/stores/{store}/inventory/{inventory}', [EmployeeStoreController::class, 'updateInventory'])->name('staff.stores.inventory.update');
+        });
+
+        Route::middleware('employee.role:cashier')->group(function () {
+        });
+    });
 });

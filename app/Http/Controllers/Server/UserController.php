@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Illuminate\Routing\Controller;
+use App\Services\LogService;
 
 class UserController extends Controller
 {
@@ -48,13 +49,15 @@ class UserController extends Controller
             'role' => 'required|in:user,admin',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone_number' => $request->phone_number,
             'role' => $request->role,
         ]);
+
+        LogService::log('create_user', "Created user: {$user->name}", null, $user);
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
@@ -68,6 +71,8 @@ class UserController extends Controller
             'role' => 'required|in:user,admin',
         ]);
 
+        $old = $user->getOriginal();
+
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
@@ -75,12 +80,26 @@ class UserController extends Controller
             'role' => $request->role,
         ]);
 
+        $changes = [];
+        foreach ($user->getChanges() as $field => $value) {
+            $changes[$field] = [
+                'old' => $old[$field] ?? null,
+                'new' => $value
+            ];
+        }
+
+        LogService::log('update_user', "Updated user: {$user->name}", null, $user, $changes);
+
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
     public function destroy(User $user)
     {
+        $name = $user->name;
         $user->delete();
+
+        LogService::log('delete_user', "Deleted user: {$name}", null, $user);
+
         return redirect()->back()->with('success', 'User deleted.');
     }
 

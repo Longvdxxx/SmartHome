@@ -39,7 +39,7 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\HandleInertiaRequests::class,
             \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
             \App\Http\Middleware\ShareCustomer::class,
-
+            \App\Http\Middleware\ShareEmployee::class,
         ],
 
         'api' => [
@@ -71,5 +71,8 @@ class Kernel extends HttpKernel
         'isAdmin' => \App\Http\Middleware\IsAdmin::class,
         'customer.auth' => \App\Http\Middleware\EnsureCustomerAuthenticated::class,
         'customer.guest' => \App\Http\Middleware\RedirectIfCustomerAuthenticated::class,
+        'employee.auth' => \App\Http\Middleware\RedirectIfNotEmployee::class,
+        'employee.role' => \App\Http\Middleware\EmployeeRoleMiddleware::class,
+        'share.employee' => \App\Http\Middleware\ShareEmployee::class,
     ];
 }

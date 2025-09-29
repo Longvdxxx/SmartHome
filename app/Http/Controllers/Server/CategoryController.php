@@ -5,10 +5,8 @@ namespace App\Http\Controllers\Server;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use App\Services\LogService;
 
 class CategoryController extends Controller
 {
@@ -37,16 +35,17 @@ class CategoryController extends Controller
         ]);
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
         ]);
 
-        Category::create([
+        $category = Category::create([
             'name' => $request->name,
         ]);
+
+        LogService::log('create_category', "Created category: {$category->name}", null, $category);
 
         return redirect()->route('categories.index')->with('success', 'Category created successfully.');
     }
@@ -57,16 +56,28 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $category->update([
-            'name' => $request->name,
-        ]);
+        $old = $category->getOriginal();
+        $category->update(['name' => $request->name]);
+
+        $changes = [];
+        foreach ($category->getChanges() as $field => $value) {
+            $changes[$field] = [
+                'old' => $old[$field] ?? null,
+                'new' => $value
+            ];
+        }
+
+        LogService::log('update_category', "Updated category: {$category->name}", null, $category, $changes);
 
         return redirect()->route('categories.index')->with('success', 'Category updated successfully.');
     }
 
     public function destroy(Category $category)
     {
+        $name = $category->name;
         $category->delete();
+
+        LogService::log('delete_category', "Deleted category: {$name}", null, $category);
 
         return redirect()->back()->with('success', 'Category deleted.');
     }
