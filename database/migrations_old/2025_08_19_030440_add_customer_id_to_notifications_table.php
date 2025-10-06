@@ -9,7 +9,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('notifications', function (Blueprint $table) {
-            // Nếu bạn có bảng customers, dùng foreign key
             $table->unsignedBigInteger('customer_id')->nullable()->after('id');
 
             $table->foreign('customer_id')

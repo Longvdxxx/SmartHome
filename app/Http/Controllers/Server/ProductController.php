@@ -56,11 +56,10 @@ class ProductController extends Controller
             'name'          => 'required|string|max:255',
             'description'   => 'nullable|string',
             'price'         => 'required|numeric|min:0',
-            'stock'         => 'required|integer|min:0',
             'default_image' => 'nullable|image|max:20480',
         ]);
 
-        $data = $request->only('category_id', 'brand_id', 'name', 'description', 'price', 'stock');
+        $data = $request->only('category_id', 'brand_id', 'name', 'description', 'price');
 
         if ($request->hasFile('default_image')) {
             $path = $request->file('default_image')->store('products', 'public');
@@ -91,11 +90,10 @@ class ProductController extends Controller
             'name'          => 'required|string|max:255',
             'description'   => 'nullable|string',
             'price'         => 'required|numeric|min:0',
-            'stock'         => 'required|integer|min:0',
             'default_image' => 'nullable|image|max:20480',
         ]);
 
-        $data = $request->only('category_id', 'brand_id', 'name', 'description', 'price', 'stock');
+        $data = $request->only('category_id', 'brand_id', 'name', 'description', 'price');
 
         if ($request->hasFile('default_image')) {
             if ($product->default_image && Storage::exists(str_replace('storage/', 'public/', $product->default_image))) {

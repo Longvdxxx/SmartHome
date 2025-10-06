@@ -13,15 +13,15 @@ return new class extends Migration
     {
         Schema::create('banners', function (Blueprint $table) {
             $table->id();
-            $table->string('name'); // Tên banner
-            $table->text('description')->nullable(); // Nội dung mô tả
-            $table->string('image_url'); // Link ảnh
-            $table->unsignedBigInteger('product_id')->nullable(); // ID sản phẩm liên kết
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('image_url');
+            $table->unsignedBigInteger('product_id')->nullable();
             $table->timestamps();
-            $table->softDeletes(); // Thêm cột deleted_at
+            $table->softDeletes();
         });
 
-        // Nếu muốn ràng buộc khóa ngoại
+
         Schema::table('banners', function (Blueprint $table) {
             $table->foreign('product_id')->references('id')->on('products')->onDelete('set null');
         });

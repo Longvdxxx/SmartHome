@@ -47,9 +47,9 @@ export default function Login() {
                     <Link href="/shop/register" className="text-blue-600 hover:underline">
                         Create account
                     </Link>
-                    <Link href="/shop/forgot-password" className="text-blue-600 hover:underline">
+                    {/* <Link href="/shop/forgot-password" className="text-blue-600 hover:underline">
                         Forgot password?
-                    </Link>
+                    </Link> */}
                 </div>
             </div>
         </div>

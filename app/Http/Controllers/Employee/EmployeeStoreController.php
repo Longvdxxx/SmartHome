@@ -30,9 +30,6 @@ class EmployeeStoreController extends Controller
         return Inertia::render('Staff/InventoryIndex', [
             'store'       => $store,
             'inventories' => $inventories,
-            'auth'        => [
-                'user' => auth('employee')->user(),
-            ],
         ]);
     }
 

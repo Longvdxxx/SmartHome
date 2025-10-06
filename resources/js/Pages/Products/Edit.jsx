@@ -19,7 +19,6 @@ export default function Edit({ product, categories, brands }) {
         name: product.name || '',
         description: product.description || '',
         price: product.price || '',
-        stock: product.stock || '',
         default_image: null,
     });
 
@@ -56,7 +55,6 @@ export default function Edit({ product, categories, brands }) {
         formData.append('name', data.name);
         formData.append('description', data.description ?? '');
         formData.append('price', data.price);
-        formData.append('stock', data.stock);
         if (data.default_image) {
             formData.append('default_image', data.default_image);
         }
@@ -179,20 +177,6 @@ export default function Edit({ product, categories, brands }) {
                                         {errors.price && <small className="p-error">{errors.price}</small>}
                                     </div>
 
-                                    {/* Stock */}
-                                    <div className="field">
-                                        <label className="block text-900 font-medium mb-2">
-                                            Stock <span className="text-red-500">*</span>
-                                        </label>
-                                        <InputText
-                                            type="number"
-                                            value={data.stock}
-                                            onChange={(e) => setData('stock', e.target.value)}
-                                            className={`w-full ${errors.stock ? 'p-invalid' : ''}`}
-                                            placeholder="Enter stock quantity"
-                                        />
-                                        {errors.stock && <small className="p-error">{errors.stock}</small>}
-                                    </div>
 
                                     <Divider />
 

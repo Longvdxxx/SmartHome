@@ -14,7 +14,7 @@ return new class extends Migration
             $table->foreign('brand_id')
                   ->references('id')
                   ->on('brands')
-                  ->onDelete('set null'); // Nếu brand bị xóa thì brand_id sẽ null
+                  ->onDelete('set null');
         });
     }
 

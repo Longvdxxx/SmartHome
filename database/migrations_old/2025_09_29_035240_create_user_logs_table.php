@@ -10,9 +10,9 @@ return new class extends Migration
     {
         Schema::create('user_logs', function (Blueprint $table) {
             $table->id();
-            $table->morphs('loggable'); // loggable_type + loggable_id
-            $table->string('action'); // ví dụ: 'create', 'update', 'delete', 'login'
-            $table->text('description')->nullable(); // chi tiết hành động
+            $table->morphs('loggable');
+            $table->string('action');
+            $table->text('description')->nullable();
             $table->ipAddress('ip_address')->nullable();
             $table->string('user_agent')->nullable();
             $table->timestamps();

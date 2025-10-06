@@ -36,8 +36,7 @@ export default function Index({ logs, filters }) {
     );
   };
 
-  // Hàm render nội dung rút gọn, click ra dialog full
-  const renderLimitedContent = (content, maxLength = 50) => {
+  const renderLimitedContent = (content, maxLength = 50, maxHeight = 60) => {
     if (!content) return "-";
 
     const isString = typeof content === "string";
@@ -56,8 +55,7 @@ export default function Index({ logs, filters }) {
         <ul className="list-disc pl-4 text-sm">
           {shortEntries.map(([field, values]) => (
             <li key={field}>
-              <strong>{field}</strong>:{" "}
-              <span className="text-red-500 line-through">{values.old}</span> →{" "}
+              <strong>{field}</strong>: <span className="text-red-500 line-through">{values.old}</span> →{" "}
               <span className="text-green-600">{values.new}</span>
             </li>
           ))}
@@ -68,7 +66,11 @@ export default function Index({ logs, filters }) {
 
     return (
       <div
-        style={{ cursor: isLong ? "pointer" : "default" }}
+        style={{
+          maxHeight: `${maxHeight}px`,
+          overflow: "hidden",
+          cursor: isLong ? "pointer" : "default",
+        }}
         onClick={() => {
           if (!isLong) return;
 
@@ -79,8 +81,7 @@ export default function Index({ logs, filters }) {
               <ul className="list-disc pl-4 text-sm">
                 {Object.entries(content).map(([field, values]) => (
                   <li key={field}>
-                    <strong>{field}</strong>:{" "}
-                    <span className="text-red-500 line-through">{values.old}</span> →{" "}
+                    <strong>{field}</strong>: <span className="text-red-500 line-through">{values.old}</span> →{" "}
                     <span className="text-green-600">{values.new}</span>
                   </li>
                 ))}
@@ -157,59 +158,12 @@ export default function Index({ logs, filters }) {
           <Column
             field="description"
             header="Description"
-            body={(rowData) => (
-              <div style={{ maxHeight: "50px", overflow: "hidden" }}>
-                {renderLimitedContent(rowData.description, 50)}
-              </div>
-            )}
+            body={(rowData) => renderLimitedContent(rowData.description, 50, 50)}
           />
           <Column field="ip_address" header="IP" />
           <Column
             header="Changes"
-            body={(rowData) => {
-              const content = rowData.changes;
-              if (!content) return "-";
-
-              const isString = typeof content === "string";
-              const maxLength = 3;
-              const isLong = isString ? content.length > maxLength : Object.keys(content).length > maxLength;
-
-              const shortContent = renderLimitedContent(content, maxLength);
-
-              return (
-                <div
-                  style={{
-                    maxHeight: "60px",
-                    overflow: "hidden",
-                    cursor: isLong ? "pointer" : "default",
-                  }}
-                  onClick={() => {
-                    if (!isLong) return;
-
-                    if (isString) {
-                      setDialogContent(<p>{content}</p>);
-                    } else {
-                      const fullContent = (
-                        <ul className="list-disc pl-4 text-sm">
-                          {Object.entries(content).map(([field, values]) => (
-                            <li key={field}>
-                              <strong>{field}</strong>:{" "}
-                              <span className="text-red-500 line-through">{values.old}</span> →{" "}
-                              <span className="text-green-600">{values.new}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      );
-                      setDialogContent(fullContent);
-                    }
-
-                    setDialogVisible(true);
-                  }}
-                >
-                  {shortContent}
-                </div>
-              );
-            }}
+            body={(rowData) => renderLimitedContent(rowData.changes, 3, 60)}
           />
           <Column field="created_at" header="Created At" />
         </DataTable>

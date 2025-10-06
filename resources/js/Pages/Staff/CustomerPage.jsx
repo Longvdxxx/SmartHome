@@ -79,7 +79,7 @@ export default function CustomerPage({ customers = [] }) {
                             type="submit"
                             label="Search"
                             icon="pi pi-search"
-                            className="px-4" // ✅ fix chữ bị lệch
+                            className="px-4"
                         />
                     </form>
                 </Card>

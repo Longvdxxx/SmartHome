@@ -11,7 +11,7 @@ import {
     List,
     FileImage,
     Star,
-    LayoutDashboard, // icon cho Dashboard
+    LayoutDashboard,
 } from 'lucide-react';
 
 const navigationCards = [

@@ -4,7 +4,6 @@ import { Link, router, usePage } from "@inertiajs/react";
 export default function CustomerLayout({ children }) {
   const { auth, categories = [], brands = [], cartCount = 0, flash, errors } =
     usePage().props;
-
   const customer = auth?.customer;
 
   const [search, setSearch] = useState("");
@@ -12,7 +11,6 @@ export default function CustomerLayout({ children }) {
   const [openBrand, setOpenBrand] = useState(false);
   const [openCustomer, setOpenCustomer] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
-
   const [openChat, setOpenChat] = useState(false);
   const [messages, setMessages] = useState([
     { sender: "bot", text: "Hello! How can I help you today?" },
@@ -26,8 +24,7 @@ export default function CustomerLayout({ children }) {
   useEffect(() => {
     const onClick = (e) => {
       if (catRef.current && !catRef.current.contains(e.target)) setOpenCat(false);
-      if (brandRef.current && !brandRef.current.contains(e.target))
-        setOpenBrand(false);
+      if (brandRef.current && !brandRef.current.contains(e.target)) setOpenBrand(false);
       if (customerRef.current && !customerRef.current.contains(e.target))
         setOpenCustomer(false);
     };
@@ -51,33 +48,23 @@ export default function CustomerLayout({ children }) {
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim()) return;
-
     const newMsg = { sender: "user", text: input };
     setMessages((prev) => [...prev, newMsg]);
     setInput("");
-
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: input }),
       });
-
-      if (!res.ok) {
-        throw new Error("Network response was not ok");
-      }
-
+      if (!res.ok) throw new Error("Network response was not ok");
       const data = await res.json();
-
       setMessages((prev) => [...prev, { sender: "bot", text: data.reply }]);
-    } catch (error) {
+    } catch {
       setMessages((prev) => [
         ...prev,
         { sender: "bot", text: "Error: Could not connect to assistant." },
       ]);
-      console.error("Chat API error:", error);
     }
   };
 
@@ -201,46 +188,51 @@ export default function CustomerLayout({ children }) {
             </Link>
 
             <div ref={customerRef} className="relative">
-              {customer ? (
-                <>
-                  <button
-                    onClick={() => setOpenCustomer(!openCustomer)}
-                    className="px-3 py-2 text-gray-700 hover:text-blue-600 border rounded"
-                  >
-                    {customer.name}
-                  </button>
-                  {openCustomer && (
-                    <div className="absolute left-0 mt-1 min-w-full bg-white shadow-lg rounded border z-50">
-                      <Link
-                        href="/shop/profile"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        Profile
-                      </Link>
-                      <Link
-                        href="/shop/orders"
-                        className="block px-4 py-2 hover:bg-gray-100"
-                      >
-                        Orders
-                      </Link>
-                      <Link
-                        href="/shop/logout"
-                        method="post"
-                        as="button"
-                        className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
-                      >
-                        Logout
-                      </Link>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Link
-                  href="/customer/login"
-                  className="text-gray-700 hover:text-blue-600"
+              <button
+                onClick={() => setOpenCustomer(!openCustomer)}
+                className="p-2 text-gray-700 hover:text-blue-600 border rounded-full flex items-center justify-center"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-7 w-7"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
                 >
-                  Login
-                </Link>
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M12 14c4.418 0 8 1.79 8 4v2H4v-2c0-2.21 3.582-4 8-4zm0-2a4 4 0 100-8 4 4 0 000 8z"
+                  />
+                </svg>
+              </button>
+              {openCustomer && (
+                <div className="absolute right-0 mt-2 min-w-[150px] bg-white shadow-lg rounded border z-50 text-gray-700">
+                  <div className="px-4 py-2 border-b text-sm text-gray-500">
+                    {customer?.name}
+                  </div>
+                  <Link
+                    href="/shop/profile"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Profile
+                  </Link>
+                  <Link
+                    href="/shop/orders"
+                    className="block px-4 py-2 hover:bg-gray-100"
+                  >
+                    Orders
+                  </Link>
+                  <Link
+                    href="/shop/logout"
+                    method="post"
+                    as="button"
+                    className="block px-4 py-2 text-left hover:bg-gray-100 w-full"
+                  >
+                    Logout
+                  </Link>
+                </div>
               )}
             </div>
           </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\StoreInventory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -80,10 +81,18 @@ class CheckoutController extends Controller
         try {
             DB::transaction(function () use ($cart, $data, $customerId) {
 
-                // Kiểm tra stock
                 foreach ($cart->items as $item) {
-                    if ($item->quantity > $item->product->stock) {
-                        throw new \Exception("Product {$item->product->name} has only {$item->product->stock} in stock.");
+                    $storeInventory = StoreInventory::where('store_id', 1)
+                        ->where('product_id', $item->product_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    if (!$storeInventory) {
+                        throw new \Exception("Store #1 does not have product {$item->product->name} in inventory.");
+                    }
+
+                    if ($item->quantity > $storeInventory->quantity) {
+                        throw new \Exception("Not enough stock for product {$item->product->name} in Store #1 (only {$storeInventory->quantity} left).");
                     }
                 }
 
@@ -107,7 +116,13 @@ class CheckoutController extends Controller
                         'price' => $item->product->price,
                     ]);
 
-                    $item->product->decrement('stock', $item->quantity);
+                    // Trừ tồn kho ở store_id = 1
+                    $storeInventory = StoreInventory::where('store_id', 1)
+                        ->where('product_id', $item->product_id)
+                        ->lockForUpdate()
+                        ->first();
+
+                    $storeInventory->decrement('quantity', $item->quantity);
                 }
 
                 $cart->items()->delete();
@@ -119,4 +134,5 @@ class CheckoutController extends Controller
 
         return redirect()->route('client.dashboard')->with('success', 'Your order has been placed!');
     }
+
 }

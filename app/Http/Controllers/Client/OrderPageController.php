@@ -85,10 +85,23 @@ class OrderPageController extends Controller
             return redirect()->back()->with('error', 'Cannot cancel this order.');
         }
 
-        $order->update(['status' => 'cancelled']);
+        \DB::transaction(function () use ($order) {
+            foreach ($order->items as $item) {
+                $inventory = \App\Models\StoreInventory::where('store_id', 1)
+                    ->where('product_id', $item->product_id)
+                    ->first();
 
-        return redirect()->back()->with('success', 'Order cancelled successfully.');
+                if ($inventory) {
+                    $inventory->increment('quantity', $item->quantity);
+                }
+            }
+
+            $order->update(['status' => 'cancelled']);
+        });
+
+        return redirect()->back()->with('success', 'Order cancelled and inventory updated.');
     }
+
 
     public function confirm(Order $order)
     {

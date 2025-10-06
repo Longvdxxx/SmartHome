@@ -21,7 +21,6 @@ export default function CreateProduct({ categories, brands }) {
         name: '',
         description: '',
         price: '',
-        stock: '',
         default_image: null,
     });
 
@@ -177,20 +176,6 @@ export default function CreateProduct({ categories, brands }) {
                                                 placeholder="Enter price"
                                             />
                                             {errors.price && <small className="p-error block mt-1">{errors.price}</small>}
-                                        </div>
-
-                                        {/* Stock */}
-                                        <div className="field">
-                                            <label className="block text-900 font-medium mb-2">
-                                                Stock <span className="text-red-500">*</span>
-                                            </label>
-                                            <InputNumber
-                                                value={data.stock}
-                                                onValueChange={(e) => setData('stock', e.value)}
-                                                className={`w-full ${errors.stock ? 'p-invalid' : ''}`}
-                                                placeholder="Enter stock quantity"
-                                            />
-                                            {errors.stock && <small className="p-error block mt-1">{errors.stock}</small>}
                                         </div>
                                     </div>
 

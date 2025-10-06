@@ -12,7 +12,6 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('reviews', function (Blueprint $table) {
-            // Thêm cột order_id nếu chưa có
             if (!Schema::hasColumn('reviews', 'order_id')) {
                 $table->foreignId('order_id')
                       ->nullable()

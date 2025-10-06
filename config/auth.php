@@ -139,17 +139,17 @@ return [
     ],
 
     'providers' => [
-        'users' => [ // admin
+        'users' => [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
 
-        'customers' => [ // khách hàng
+        'customers' => [
             'driver' => 'eloquent',
             'model' => App\Models\Customer::class,
         ],
 
-        'employees' => [ // nhân viên
+        'employees' => [
             'driver' => 'eloquent',
             'model' => App\Models\Employee::class,
         ],

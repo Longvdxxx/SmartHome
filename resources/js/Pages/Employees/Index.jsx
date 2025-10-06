@@ -82,7 +82,6 @@ export default function Index({ auth, employees, filters }) {
 
   const storeTemplate = (rowData) => rowData.store?.name || '-';
 
-  // Thêm template để hiển thị role thân thiện
   const roleTemplate = (rowData) => {
     switch(rowData.role) {
       case 'manager':

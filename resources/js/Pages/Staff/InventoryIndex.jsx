@@ -44,7 +44,7 @@ export default function InventoryIndex() {
 
   const onRowEditComplete = (event) => {
     const newData = { ...event.newData };
-    newData.quantity = Number(newData.quantity); // fix type
+    newData.quantity = Number(newData.quantity);
 
     console.log("Edit complete, sending update:", newData);
 
@@ -95,7 +95,7 @@ export default function InventoryIndex() {
         value={options.value ?? 0}
         onValueChange={(e) => {
           console.log("Input changed:", e.value);
-          options.rowData.quantity = Number(e.value); // update rowData để gửi đúng giá trị
+          options.rowData.quantity = Number(e.value);
           setInventoryItems((prev) =>
             prev.map((item) =>
               item.id === options.rowData.id

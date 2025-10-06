@@ -83,40 +83,45 @@ export default function Cart({ cart }) {
               const subtotal = price * qty;
 
               return (
-                <div key={item.id} className="flex justify-between items-center border p-4 rounded">
-                  <div>
+                <div
+                  key={item.id}
+                  className="flex justify-between items-center border p-4 rounded"
+                >
+                  <div className="flex flex-col">
                     <h2 className="font-semibold">{item.product.name}</h2>
                     <p>Price: ${price.toFixed(2)}</p>
-                    <div className="flex items-center space-x-2">
+
+                    <div className="flex items-center space-x-4 mt-2">
                       <input
                         type="number"
                         value={qty}
                         onChange={(e) =>
                           handleQuantityChange(item.id, parseInt(e.target.value))
                         }
-                        className="w-16 border rounded p-1"
+                        className="w-16 border rounded p-1 text-center"
                       />
+
                       <button
                         onClick={() => updateQuantity(item.id)}
-                        className="bg-blue-500 text-white px-3 py-1 rounded"
+                        className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600"
                       >
                         Update
                       </button>
+
+                      <div className="flex items-center space-x-3 ml-4">
+                        {/* <span className="font-semibold">Subtotal: ${subtotal.toFixed(2)}</span> */}
+                        <button
+                          onClick={() => removeItem(item.id)}
+                          className="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center space-x-4">
-                    <p className="font-semibold">${subtotal.toFixed(2)}</p>
-                    <button
-                      onClick={() => removeItem(item.id)}
-                      className="bg-red-500 text-white px-3 py-1 rounded"
-                    >
-                      Remove
-                    </button>
                   </div>
                 </div>
               );
             })}
-
             <div className="text-right font-bold text-lg">Total: ${total.toFixed(2)}</div>
             <div className="text-right">
               <Link

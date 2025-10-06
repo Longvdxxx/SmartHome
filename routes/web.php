@@ -7,7 +7,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Server\{ProductController, CategoryController, BrandController, BannerController, ReviewController, ProductImageController, OrderItemController, OrderController, CustomerController, UserController, EmployeeController, StoreController, LogController};
 use App\Http\Controllers\Client\{DashboardController, ProductPageController, CustomerAuthController, SelectRoleController, ProductListController, CheckoutController, CartController, OrderPageController};
 use App\Http\Controllers\Client\CustomerProfileController;
-use App\Http\Controllers\Employee\{EmployeeAuthController, EmployeeCustomerController, EmployeeStoreController};
+use App\Http\Controllers\Employee\{EmployeeAuthController, EmployeeCustomerController, EmployeeStoreController, EmployeeManageController, EmployeePaymentController, EmployeeProfileController, EmployeeOrderController};
 use App\Models\Employee;
 
 /*
@@ -200,9 +200,21 @@ Route::prefix('shop')->group(function () {
 });
 
 Route::prefix('staff')->group(function () {
-    Route::get('/login', [EmployeeAuthController::class, 'showLogin'])->name('staff.login');
-    Route::post('/login', [EmployeeAuthController::class, 'login'])->name('staff.login.submit');
+    Route::get('/login', [EmployeeAuthController::class, 'showLogin'])
+        ->name('staff.login')
+        ->middleware('employee.guest');
+
+    Route::post('/login', [EmployeeAuthController::class, 'login'])
+        ->name('staff.login.submit')
+        ->middleware('employee.guest');
+
     Route::post('/logout', [EmployeeAuthController::class, 'logout'])->name('staff.logout');
+
+    Route::get('/profile', [EmployeeProfileController::class, 'editProfile'])->name('staff.profile.edit');
+    Route::put('/profile', [EmployeeProfileController::class, 'updateProfile'])->name('staff.profile.update');
+
+    Route::get('/profile/password', [EmployeeProfileController::class, 'editPassword'])->name('staff.profile.password.edit');
+    Route::put('/profile/password', [EmployeeProfileController::class, 'updatePassword'])->name('staff.profile.password.update');
 
     Route::middleware(['web', 'employee.auth', 'share.employee'])->group(function () {
         Route::get('/dashboard', fn () => inertia('Staff/Dashboard'))->name('staff.dashboard');
@@ -211,6 +223,20 @@ Route::prefix('staff')->group(function () {
         Route::middleware('employee.role:manager,cashier')->group(function () {
             Route::get('/customers', [EmployeeCustomerController::class, 'index'])->name('staff.customers.index');
             Route::post('/customers', [EmployeeCustomerController::class, 'store'])->name('staff.customers.store');
+
+            Route::get('/payment', [EmployeePaymentController::class, 'index'])->name('staff.payment.index');
+            Route::get('/payment/checkout', [EmployeePaymentController::class, 'checkoutPage'])->name('staff.payment.checkoutPage');
+            Route::get('/payment/confirm', [EmployeePaymentController::class, 'confirmPage'])->name('staff.payment.confirmPage');
+
+            Route::post('/payment/checkout', [EmployeePaymentController::class, 'checkout'])->name('staff.payment.checkout');
+            Route::post('/payment/confirm', [EmployeePaymentController::class, 'confirm'])->name('staff.payment.confirm');
+            Route::post('/payment/store', [EmployeePaymentController::class, 'store'])->name('staff.payment.store');
+
+            Route::get('/orders', [EmployeeOrderController::class, 'index'])->name('staff.orders.index');
+            Route::get('/orders/{order}', [EmployeeOrderController::class, 'show'])->name('staff.orders.show');
+            Route::post('/orders/{order}/cancel', [EmployeeOrderController::class, 'cancel'])->name('staff.orders.cancel');
+            Route::post('/orders/{order}/confirm', [EmployeeOrderController::class, 'confirm'])->name('staff.orders.confirm');
+            Route::post('/orders/{order}/cancel', [EmployeeOrderController::class, 'cancel'])->name('staff.orders.cancel');
         });
 
         Route::middleware('employee.role:manager,stock')->group(function () {
@@ -218,6 +244,16 @@ Route::prefix('staff')->group(function () {
         });
 
         Route::middleware('employee.role:cashier')->group(function () {
+        });
+
+        Route::middleware('employee.role:manager')->prefix('employee')->name('staff.manage.')->group(function () {
+            Route::get('/', [EmployeeManageController::class, 'index'])->name('index');
+            Route::get('/create', [EmployeeManageController::class, 'create'])->name('create');
+            Route::post('/', [EmployeeManageController::class, 'store'])->name('store');
+            Route::get('/{id}', [EmployeeManageController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [EmployeeManageController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [EmployeeManageController::class, 'update'])->name('update');
+            Route::delete('/{id}', [EmployeeManageController::class, 'destroy'])->name('destroy');
         });
     });
 });

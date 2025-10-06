@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Product;
+use App\Models\StoreInventory;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
@@ -12,6 +13,10 @@ class ProductPageController extends Controller
     public function show($id)
     {
         $product = Product::with(['images', 'reviews'])->findOrFail($id);
+
+        $storeStock = StoreInventory::where('store_id', 1)
+            ->where('product_id', $product->id)
+            ->value('quantity') ?? 0;
 
         $images = [];
         if ($product->default_image) {
@@ -53,8 +58,7 @@ class ProductPageController extends Controller
                     'price' => '$' . number_format($p->price, 2),
                     'image' => $p->default_image ? '/' . ltrim($p->default_image, '/') : null,
                 ];
-        });
-
+            });
 
         $averageRating = $reviews->count() > 0
             ? round($reviews->avg('rating'), 1)
@@ -66,7 +70,7 @@ class ProductPageController extends Controller
                 'name' => $product->name,
                 'description' => $product->description,
                 'price' => '$' . number_format($product->price, 2),
-                'stock' => $product->stock,
+                'stock' => $storeStock,
                 'images' => $images,
                 'reviews' => $reviews,
                 'averageRating' => $averageRating,

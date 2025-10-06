@@ -55,8 +55,8 @@ export default function Inventory({ auth, store, inventories }) {
             dataKey="id"
             onRowEditComplete={onRowEditComplete}
             paginator
-            rows={10} // số mặc định
-            rowsPerPageOptions={[10, 25, 50, 100]} // thêm lựa chọn ở paginator
+            rows={10}
+            rowsPerPageOptions={[10, 25, 50, 100]}
             stripedRows
             responsiveLayout="scroll"
             emptyMessage="No products found"

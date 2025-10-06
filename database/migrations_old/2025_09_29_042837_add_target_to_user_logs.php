@@ -12,9 +12,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('user_logs', function (Blueprint $table) {
-            $table->string('target_type')->nullable();   // Model bị tác động (Brand, Category…)
-            $table->unsignedBigInteger('target_id')->nullable(); // ID bản ghi bị tác động
-            $table->json('changes')->nullable(); // Lưu thay đổi (trước → sau)
+            $table->string('target_type')->nullable();
+            $table->unsignedBigInteger('target_id')->nullable();
+            $table->json('changes')->nullable();
         });
     }
 
@@ -25,7 +25,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('user_logs', function (Blueprint $table) {
-            //
+            $table->dropColumn(['target_type', 'target_id', 'changes']);
         });
     }
 };

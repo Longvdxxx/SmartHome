@@ -141,7 +141,7 @@ export default function OrderShow({ order }) {
                 item.product.reviews && item.product.reviews.length > 0;
 
               if (alreadyReviewed) {
-                const reviewData = item.product.reviews[0]; // review trên đơn này
+                const reviewData = item.product.reviews[0];
                 return (
                   <div key={item.id} className="mb-6 border-b pb-4">
                     <p className="font-semibold mb-2">{item.product.name}</p>

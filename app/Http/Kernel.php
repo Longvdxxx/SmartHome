@@ -74,5 +74,6 @@ class Kernel extends HttpKernel
         'employee.auth' => \App\Http\Middleware\RedirectIfNotEmployee::class,
         'employee.role' => \App\Http\Middleware\EmployeeRoleMiddleware::class,
         'share.employee' => \App\Http\Middleware\ShareEmployee::class,
+        'employee.guest' => \App\Http\Middleware\RedirectIfEmployeeAuthenticated::class,
     ];
 }
