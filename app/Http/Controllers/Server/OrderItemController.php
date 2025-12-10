@@ -57,7 +57,6 @@ class OrderItemController extends Controller
 
         $orderItem = OrderItem::create($request->only('order_id', 'product_id', 'quantity', 'price'));
 
-        // LogService create
         LogService::log(
             'create_order_item',
             "Created order item #{$orderItem->id}",
@@ -86,10 +85,9 @@ class OrderItemController extends Controller
             'price'      => 'required|numeric|min:0'
         ]);
 
-        $old = $orderItem->getOriginal(); // lưu dữ liệu cũ
+        $old = $orderItem->getOriginal();
         $orderItem->update($request->only('order_id', 'product_id', 'quantity', 'price'));
 
-        // Log JSON chi tiết thay đổi
         $changes = [];
         foreach ($orderItem->getChanges() as $field => $value) {
             $changes[$field] = [
@@ -98,7 +96,6 @@ class OrderItemController extends Controller
             ];
         }
 
-        // LogService update
         LogService::log(
             'update_order_item',
             "Updated order item #{$orderItem->id}",
@@ -114,7 +111,6 @@ class OrderItemController extends Controller
     {
         $orderItem->delete();
 
-        // LogService delete
         LogService::log(
             'delete_order_item',
             "Deleted order item #{$orderItem->id}",

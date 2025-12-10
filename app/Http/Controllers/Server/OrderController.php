@@ -78,22 +78,19 @@ class OrderController extends Controller
         return Inertia::render('Orders/Edit', [
             'order'     => $order,
             'customers' => Customer::select('id', 'name')->get(),
-            // thêm các mảng khác nếu Edit page có dùng
         ]);
     }
 
 
-    // Update chỉ status
     public function update(Request $request, Order $order)
     {
         $request->validate([
             'status' => 'required|string|max:50',
         ]);
 
-        $old = $order->getOriginal(); // lưu trạng thái cũ
-        $order->update(['status' => $request->status]); // update status
+        $old = $order->getOriginal();
+        $order->update(['status' => $request->status]);
 
-        // Tạo JSON chi tiết thay đổi, y hệt CategoryController
         $changes = [];
         foreach ($order->getChanges() as $field => $value) {
             $changes[$field] = [
@@ -113,7 +110,6 @@ class OrderController extends Controller
         return redirect()->route('orders.index')->with('success', 'Order status updated successfully.');
     }
 
-    // Xóa order
     public function destroy(Order $order)
     {
         $name = "Order #{$order->id}";
@@ -129,7 +125,6 @@ class OrderController extends Controller
         return redirect()->back()->with('success', 'Order deleted.');
     }
 
-    // Xem chi tiết order
     public function show(Order $order)
     {
         $order->load(['customer', 'items.product']);

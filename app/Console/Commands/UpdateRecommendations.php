@@ -25,7 +25,7 @@ class UpdateRecommendations extends Command
      */
     public function handle()
     {
-        $output = shell_exec('python3 recommend.py'); // gọi Python script
+        $output = shell_exec('python3 recommend.py');
         $this->info("Recommendations updated!");
     }
 }

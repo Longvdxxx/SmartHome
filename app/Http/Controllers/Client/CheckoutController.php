@@ -116,7 +116,6 @@ class CheckoutController extends Controller
                         'price' => $item->product->price,
                     ]);
 
-                    // Trừ tồn kho ở store_id = 1
                     $storeInventory = StoreInventory::where('store_id', 1)
                         ->where('product_id', $item->product_id)
                         ->lockForUpdate()

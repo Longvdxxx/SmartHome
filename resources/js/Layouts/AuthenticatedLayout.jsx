@@ -44,6 +44,11 @@ export default function AuthenticatedLayout({ user, header, children }) {
                                 <NavLink href={route('stores.index')} active={route().current('stores.index')}>
                                     Stores
                                 </NavLink>
+                                {isAdmin && (
+                                    <NavLink href={route('logs.index')} active={route().current('logs.index')}>
+                                        Logs
+                                    </NavLink>
+                                )}
                                 <Dropdown>
                                     <Dropdown.Trigger>
                                         <button
@@ -179,6 +184,11 @@ export default function AuthenticatedLayout({ user, header, children }) {
                         <ResponsiveNavLink href={route('stores.index')} active={route().current('stores.index')}>
                             Stores
                         </ResponsiveNavLink>
+                        {isAdmin && (
+                            <ResponsiveNavLink href={route('logs.index')} active={route().current('logs.index')}>
+                                Logs
+                            </ResponsiveNavLink>
+                        )}
                         <div className="pl-3">
                             <div className="flex items-center text-gray-700 font-medium">
                                 Products

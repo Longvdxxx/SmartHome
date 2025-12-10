@@ -13,7 +13,6 @@ class LogController extends Controller
     {
         $query = UserLog::query();
 
-        // Action filter (dùng LIKE để match nhiều loại)
         if ($request->filled('action')) {
             $action = $request->action;
             if ($action === 'created') {
@@ -27,7 +26,6 @@ class LogController extends Controller
             }
         }
 
-        // Search filter (search nhiều cột)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {

@@ -44,9 +44,17 @@ export default function Register() {
                             placeholder="Password"
                             value={data.password}
                             onChange={(e) => setData('password', e.target.value)}
+                            minLength={6}
+                            pattern="(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{6,}"
+                            title="Mật khẩu phải có ít nhất 6 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt."
                             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                         {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+                        {!errors.password && (
+                            <p className="text-xs text-gray-500 mt-1">
+                                Pass word must be at least 6 characters long and include uppercase, lowercase, number, and special character.
+                            </p>
+                        )}
                     </div>
                     <div>
                         <input
@@ -54,6 +62,7 @@ export default function Register() {
                             placeholder="Confirm Password"
                             value={data.password_confirmation}
                             onChange={(e) => setData('password_confirmation', e.target.value)}
+                            minLength={6}
                             className="w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                         />
                     </div>
@@ -66,7 +75,7 @@ export default function Register() {
                     </button>
                 </form>
                 <div className="text-center mt-4 text-sm">
-                    Already have an account?{' '}
+                    Already have an account{' '}
                     <Link href="/shop/login" className="text-blue-600 hover:underline">
                         Login
                     </Link>

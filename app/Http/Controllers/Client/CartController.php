@@ -26,7 +26,6 @@ class CartController extends Controller
                 ? '/' . ltrim($item->product->default_image, '/')
                 : '/placeholder.png';
 
-            // Lấy tồn kho của store_id = 1
             $storeStock = StoreInventory::where('store_id', 1)
                 ->where('product_id', $item->product->id)
                 ->value('quantity') ?? 0;
@@ -54,7 +53,6 @@ class CartController extends Controller
 
     public function add(Request $request, Product $product)
     {
-        // Lấy tồn kho của store_id = 1
         $storeInventory = StoreInventory::where('store_id', 1)
             ->where('product_id', $product->id)
             ->first();
@@ -70,7 +68,6 @@ class CartController extends Controller
         $item = $cart->items()->where('product_id', $product->id)->first();
         $quantity = $request->input('quantity', 1);
 
-        // Nếu vượt quá số lượng trong store
         $newQuantity = ($item ? $item->quantity : 0) + $quantity;
         if ($newQuantity > $storeInventory->quantity) {
             return redirect()->back()->with('error', "Only {$storeInventory->quantity} left in stock for {$product->name}.");
@@ -102,7 +99,6 @@ class CartController extends Controller
             $quantity = 1;
         }
 
-        // Lấy tồn kho của store_id = 1
         $storeInventory = StoreInventory::where('store_id', 1)
             ->where('product_id', $item->product->id)
             ->first();

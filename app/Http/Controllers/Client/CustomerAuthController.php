@@ -7,6 +7,7 @@ use App\Models\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Password;
 
 class CustomerAuthController extends Controller
 {
@@ -27,7 +28,6 @@ class CustomerAuthController extends Controller
         if (Auth::guard('customer')->attempt($credentials)) {
             $request->session()->regenerate();
 
-            // Log thông tin customer vừa đăng nhập
             $customer = Auth::guard('customer')->user();
             logger('Customer logged in:', $customer ? (method_exists($customer, 'toArray') ? $customer->toArray() : (array)$customer) : []);
 
@@ -49,7 +49,15 @@ class CustomerAuthController extends Controller
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:customers',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                Password::min(6)
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+            ],
         ]);
 
         $customer = Customer::create([
@@ -60,7 +68,6 @@ class CustomerAuthController extends Controller
 
         Auth::guard('customer')->login($customer);
 
-        // Log thông tin customer vừa đăng ký và login
         logger('Customer registered and logged in:', $customer->toArray());
 
         return redirect()->route('client.dashboard');

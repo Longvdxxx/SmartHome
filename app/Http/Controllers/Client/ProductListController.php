@@ -15,22 +15,18 @@ class ProductListController extends Controller
     {
         $query = Product::query();
 
-        // search
         if ($request->filled('search')) {
             $query->where('name', 'like', '%' . $request->search . '%');
         }
 
-        // filter category
         if ($request->filled('category')) {
             $query->where('category_id', $request->category);
         }
 
-        // filter brand
         if ($request->filled('brand')) {
             $query->where('brand_id', $request->brand);
         }
 
-        // sort
         if ($request->filled('sort')) {
             switch ($request->sort) {
                 case 'price_asc':

@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Server;
 use App\Models\Review;
 use App\Models\Product;
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Models\customer;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,10 +13,10 @@ class ReviewController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Review::with(['user', 'product'])
+        $query = Review::with(['customer', 'product'])
             ->when($request->search, function($q) {
                 $q->where('comment', 'like', '%' . request('search') . '%')
-                  ->orWhereHas('user', function($sub) {
+                  ->orWhereHas('customer', function($sub) {
                       $sub->where('name', 'like', '%' . request('search') . '%');
                   })
                   ->orWhereHas('product', function($sub) {
@@ -41,7 +41,7 @@ class ReviewController extends Controller
     public function create()
     {
         return Inertia::render('Reviews/Create', [
-            'users'    => User::select('id', 'name')->get(),
+            'customers'    => customer::select('id', 'name')->get(),
             'products' => Product::select('id', 'name')->get()
         ]);
     }
@@ -49,13 +49,13 @@ class ReviewController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'user_id'    => 'required|exists:users,id',
+            'customer_id'    => 'required|exists:customers,id',
             'product_id' => 'required|exists:products,id',
             'rating'     => 'required|integer|min:1|max:5',
             'comment'    => 'nullable|string|max:1000',
         ]);
 
-        Review::create($request->only('user_id', 'product_id', 'rating', 'comment'));
+        Review::create($request->only('customer_id', 'product_id', 'rating', 'comment'));
 
         return redirect()->route('reviews.index')->with('success', 'Review created successfully.');
     }
@@ -64,7 +64,7 @@ class ReviewController extends Controller
     {
         return Inertia::render('Reviews/Edit', [
             'review'   => $review,
-            'users'    => User::select('id', 'name')->get(),
+            'customer'    => Customer::select('id', 'name')->get(),
             'products' => Product::select('id', 'name')->get()
         ]);
     }
@@ -72,13 +72,13 @@ class ReviewController extends Controller
     public function update(Request $request, Review $review)
     {
         $request->validate([
-            'user_id'    => 'required|exists:users,id',
+            'customer_id'    => 'required|exists:customers,id',
             'product_id' => 'required|exists:products,id',
             'rating'     => 'required|integer|min:1|max:5',
             'comment'    => 'nullable|string|max:1000',
         ]);
 
-        $review->update($request->only('user_id', 'product_id', 'rating', 'comment'));
+        $review->update($request->only('customer_id', 'product_id', 'rating', 'comment'));
 
         return redirect()->route('reviews.index')->with('success', 'Review updated successfully.');
     }
@@ -92,7 +92,7 @@ class ReviewController extends Controller
     public function show(Review $review)
     {
         return Inertia::render('Reviews/Show', [
-            'review' => $review->load(['user', 'product'])
+            'review' => $review->load(['customer', 'product'])
         ]);
     }
 }

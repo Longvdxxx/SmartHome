@@ -28,7 +28,7 @@ class EmployeeOrderController extends Controller
                     'status' => ucfirst($order->status),
                     'total' => $order->total_price,
                     'created_at' => $order->created_at->format('d/m/Y H:i'),
-                    'can_cancel' => $daysSinceCreated <= 7, // Có thể hủy tất cả trong 7 ngày
+                    'can_cancel' => $daysSinceCreated <= 7,
                 ];
             });
 

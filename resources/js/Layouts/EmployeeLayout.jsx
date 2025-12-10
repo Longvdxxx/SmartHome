@@ -40,12 +40,12 @@ export default function EmployeeLayout({ children }) {
 
                     {employee && ["manager", "cashier"].includes(employee.role) && (
                         <>
-                            <a
+                            {/* <a
                                 href={route("staff.customers.index")}
                                 className="block px-3 py-2 rounded text-white hover:bg-blue-600"
                             >
                                 Add Customer
-                            </a>
+                            </a> */}
 
                             <a
                                 href={route("staff.payment.index")}

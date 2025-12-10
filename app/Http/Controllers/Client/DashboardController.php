@@ -70,7 +70,7 @@ class DashboardController extends Controller
                     'id'    => $product->id,
                     'name'  => $product->name,
                     'sold'  => $product->sold,
-                    'price' => '$' . number_format($product->price, 2), // thêm price
+                    'price' => '$' . number_format($product->price, 2),
                     'image' => $product->image
                         ? '/' . ltrim($product->image, '/')
                         : ($product->default_image ? '/' . ltrim($product->default_image, '/') : null),

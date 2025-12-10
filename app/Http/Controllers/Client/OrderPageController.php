@@ -39,9 +39,8 @@ class OrderPageController extends Controller
             abort(403, 'Forbidden');
         }
 
-        // Lấy review chỉ của đơn này (order hiện tại)
         $order->load(['items.product.reviews' => function ($q) use ($order) {
-            $q->where('user_id', Auth::guard('customer')->id())
+            $q->where('customer_id', Auth::guard('customer')->id())
               ->where('order_id', $order->id);
         }]);
 
@@ -133,7 +132,7 @@ class OrderPageController extends Controller
             return redirect()->back()->with('error', 'This product is not in your order.');
         }
 
-        $alreadyReviewed = Review::where('user_id', Auth::guard('customer')->id())
+        $alreadyReviewed = Review::where('customer_id', Auth::guard('customer')->id())
             ->where('order_id', $order->id)
             ->where('product_id', $product->id)
             ->exists();
@@ -148,7 +147,7 @@ class OrderPageController extends Controller
         ]);
 
         Review::create([
-            'user_id'    => Auth::guard('customer')->id(),
+            'customer_id'    => Auth::guard('customer')->id(),
             'order_id'   => $order->id,
             'product_id' => $product->id,
             'rating'     => $validated['rating'],
